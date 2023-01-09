@@ -16,7 +16,7 @@
 
 <script>
 import { mockData } from '@/utils'
-import AVirtualTable from '../a-virtual-table'
+import AVirtualTable from '../../../src/a-virtual-table'
 
 export default {
   components: {
@@ -31,7 +31,6 @@ export default {
           dataIndex: 'name',
           key: 'name',
           scopedSlots: { customRender: 'name' },
-          fixed: 'left',
           width: 200
         },
         {
@@ -73,8 +72,7 @@ export default {
           dataIndex: 'address',
           key: 'address 4',
           ellipsis: true,
-          width: 300,
-          fixed: 'right',
+          fixed: 'right'
         }
       ],
       list: mockData(0, 2000)

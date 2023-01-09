@@ -79,6 +79,10 @@ export default {
           title: '多表头',
           path: '/HeaderDemo'
         },
+        {
+          title: '滚动容器',
+          path: '/scrollerDemo'
+        },
         // {
         //   path: '/AntTable',
         //   title: '原来a-table'

@@ -1,8 +1,13 @@
-# el-table-virtual-scroll
+# a-virtual-table
 
 基于Ant-Design-Vue的 Table 组件开发的虚拟滚动组件，支持动态高度，解决数据量大时滚动卡顿的问题。
 
+⚠️仅支持vue2、Ant-Design-Vue@1。
+
+
 demo & 源码：https://xiaocheng555.github.io/a-virtual-table/
+
+`<a-virtual-table>` 组件在 `src/a-virtual-table.vue` 目录。
 
 ## 用法
 

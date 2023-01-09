@@ -1,14 +1,20 @@
 <template>
   <div>
+    <p
+      :style="{height: largeHeight ? '600px' : '200px', background: 'pink'}"
+      @click="onHeightChange">
+      点击改变高度
+    </p>
     <a-virtual-table
+      ref="virtualTable"
       :columns="columns"
       :data-source="list"
       :itemSize="54"
       keyProp="id"
       row-key="id"
+      scroller="html"
       :pagination="false"
-      :scroll="{ x: 1300, y: 600 }"
-      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio' }">
+      :scroll="{ x: 1300 }">
       <a slot="name" slot-scope="{text}">{{ text }}===</a>
     </a-virtual-table>
   </div>
@@ -24,6 +30,7 @@ export default {
   },
   data () {
     return {
+      largeHeight: false,
       selectedRowKeys: [],
       columns: [
         {
@@ -32,6 +39,23 @@ export default {
           key: 'name',
           scopedSlots: { customRender: 'name' },
           width: 200
+        },
+        {
+          title: '多表头',
+          children: [
+            {
+              title: 'id',
+              dataIndex: 'id',
+              key: 'id',
+              width: 100
+            },
+            {
+              title: 'text',
+              dataIndex: 'text',
+              key: 'text',
+              width: 400
+            }
+          ]
         },
         {
           title: 'id',
@@ -70,18 +94,19 @@ export default {
           title: 'Long Column',
           dataIndex: 'address',
           key: 'address 4',
-          ellipsis: true,
-          width: 300,
-          fixed: 'right',
+          ellipsis: true
         }
       ],
       list: mockData(0, 2000)
     }
   },
   methods: {
-    onSelectChange(selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys);
-      this.selectedRowKeys = selectedRowKeys;
+    onHeightChange () {
+      this.largeHeight = !this.largeHeight
+      // 当滚动容器顶部内容高度变化很大时，需要更新虚拟滚动组件，避免出现表格出现一段空白内容
+      this.$nextTick(() => {
+        this.$refs.virtualTable.update()
+      })
     }
   }
 }

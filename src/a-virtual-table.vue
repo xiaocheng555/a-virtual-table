@@ -2,6 +2,7 @@
   <a-table
     v-bind="$attrs"
     v-on="$listeners"
+    :pagination="false"
     :columns="tableColumns"
     :data-source="renderData">
     <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="text">
@@ -68,14 +69,14 @@ export default {
       type: Number,
       default: 60
     },
-    // 指定滚动容器(TODO:有bug)
-    // scrollBox: {
-    //   type: String
-    // },
+    // 指定滚动容器
+    scrollBox: {
+      type: String
+    },
     // 顶部和底部缓冲区域，值越大显示表格的行数越多
     buffer: {
       type: Number,
-      default: 50
+      default: 100
     },
     // 滚动事件的节流时间
     throttleTime: {
@@ -90,6 +91,8 @@ export default {
   },
   data () {
     return {
+      start: 0,
+      end: undefined,
       sizes: {}, // 尺寸映射（依赖响应式）
       renderData: [],
       // 兼容多选
@@ -157,6 +160,7 @@ export default {
     // 初始化数据
     initData () {
       this.scroller = this.getScroller()
+      this.toTop = this.$el.getBoundingClientRect().top - this.scroller.getBoundingClientRect().top
 
       // 首次需要执行2次handleScroll：因为第一次计算renderData时表格高度未确认导致计算不准确；第二次执行时，表格高度确认后，计算renderData是准确的
       this.handleScroll()
@@ -218,8 +222,8 @@ export default {
     calcRenderData () {
       const { scroller, buffer, dataSource: data } = this
       // 计算可视范围顶部、底部
-      const top = getScrollTop(scroller) - buffer
-      const bottom = getScrollTop(scroller) + getOffsetHeight(scroller) + buffer
+      const top = getScrollTop(scroller) - buffer - this.toTop
+      const bottom = getScrollTop(scroller) + getOffsetHeight(scroller) + buffer - this.toTop
 
       let start
       let end
@@ -334,6 +338,7 @@ export default {
     // 【外部调用】更新
     update () {
       // console.log('update')
+      this.toTop = this.$el.getBoundingClientRect().top - this.scroller.getBoundingClientRect().top
       this.handleScroll()
     },
 
@@ -397,10 +402,5 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
-// /deep/ .ant-table-scroll-position-right {
-//   .ant-table-fixed-right {
-//     box-shadow: -6px 0 6px -4px rgb(0 0 0 / 15%);
-//   }
-// }
+<style lang='less'>
 </style>

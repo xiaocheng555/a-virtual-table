@@ -19,7 +19,7 @@ Vue.use(Router)
 const routes = [
   {
     path: '/',
-    redirect: '/CaseDemo'
+    redirect: '/BasicDemo'
   },
   ...getRoutes()
 ]
