@@ -1,6 +1,6 @@
-export function mockData (start, end) {
+export function mockData(start, end) {
   const list = []
-  for (let i = 0; i < end; i++) {
+  for (let i = start; i < end; i++) {
     const text = getContent()
     const text2 = getContent()
     list.push({
@@ -26,10 +26,10 @@ export function mockData (start, end) {
   return list
 }
 
-function genRandomVal (min, max) { 
-  return Math.floor(Math.random() * (max - min)) + min 
-} 
-    
+function genRandomVal (min, max) {
+  return Math.floor(Math.random() * (max - min)) + min
+}
+
 function getContent () {
   const content = [
     '这是一条测试数据',

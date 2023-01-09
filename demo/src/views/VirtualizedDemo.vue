@@ -9,7 +9,6 @@
       keyProp="id"
       row-key="id"
       :virtualized="list.length > 100"
-      :pagination="false"
       :scroll="{ x: 1300, y: 600 }"
       @change="onVirtualChange">
       <a slot="name" slot-scope="{text}">{{ text }}===</a>

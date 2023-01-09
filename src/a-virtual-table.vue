@@ -100,6 +100,11 @@ export default {
     virtualized: {
       type: Boolean,
       default: true
+    },
+    // 是否是树形结构
+    isTree: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -223,16 +228,39 @@ export default {
     updateSizes () {
       if (!this.dynamic) return
 
-      const rows = this.$el.querySelectorAll('.ant-table-body .ant-table-tbody .ant-table-row')
+      let rows = []
+      if (this.isTree) {
+        // 处理树形表格，筛选出一级树形结构
+        rows = this.$el.querySelectorAll('.ant-table-body .ant-table-row-level-0')
+      } else {
+        rows = this.$el.querySelectorAll('.ant-table-body .ant-table-tbody .ant-table-row')
+      }
+
       Array.from(rows).forEach((row, index) => {
         const item = this.renderData[index]
         if (!item) return
 
         // 计算表格行的高度
         let offsetHeight = row.offsetHeight
+        // 表格行如果有扩展行，需要加上扩展内容的高度
+        const nextEl = row.nextSibling
+        if (nextEl && nextEl.classList && nextEl.classList.contains('ant-table-expanded-row')) {
+          offsetHeight += row.nextSibling.offsetHeight
+        }
+
+        // 表格行如果有子孙节点，需要加上子孙节点的高度
+        if (this.isTree) {
+          let next = row.nextSibling
+          while (next && next.tagName === 'TR' && !next.classList.contains('ant-table-row-level-0')) {
+            offsetHeight += next.offsetHeight
+            next = next.nextSibling
+          }
+        }
+
         const key = item[this.keyProp]
         if (this.sizes[key] !== offsetHeight) {
           this.$set(this.sizes, key, offsetHeight)
+          row._offsetHeight = offsetHeight
         }
       })
     },

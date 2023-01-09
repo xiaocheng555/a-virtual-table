@@ -13,7 +13,6 @@
       keyProp="id"
       row-key="id"
       scroller="html"
-      :pagination="false"
       :scroll="{ x: 1300 }">
       <a slot="name" slot-scope="{text}">{{ text }}===</a>
     </a-virtual-table>

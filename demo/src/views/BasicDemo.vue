@@ -6,7 +6,6 @@
       :itemSize="54"
       keyProp="id"
       row-key="id"
-      :pagination="false"
       :scroll="{ x: 1300, y: 600 }">
       <a slot="name" slot-scope="{text}">{{ text }}===</a>
     </a-virtual-table>

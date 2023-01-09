@@ -6,7 +6,6 @@
       :itemSize="54"
       keyProp="id"
       row-key="id"
-      :pagination="false"
       :scroll="{ x: 1300, y: 600 }"
       :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio' }">
       <a slot="name" slot-scope="{text}">{{ text }}===</a>

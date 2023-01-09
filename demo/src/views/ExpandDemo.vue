@@ -1,20 +1,21 @@
 <template>
   <div>
+    <el-alert type="warning" show-icon>
+      不支持使用 <i>:expandedRowKeys.sync="expandedRowKeys" 方式</i>
+    </el-alert>
     <a-virtual-table
-      ref="virtualTable"
       :columns="columns"
       :data-source="list"
       :itemSize="54"
       keyProp="id"
       row-key="id"
       :scroll="{ x: 1300, y: 600 }"
-      @selection-change="handleSelectionChange">
-      <a slot="name" slot-scope="{text}">{{ text }}=12==</a>
+      :expanded-row-keys="expandedRowKeys"
+      @expand="onTableExpand">
+      <template slot="expandedRowRender" slot-scope="row">
+        详细内容：{{ row.text }}
+      </template>
     </a-virtual-table>
-    <div style="margin-top: 20px">
-      <a-button @click="toggleSelection([list[1], list[2]])">切换第二、第三行的选中状态</a-button>
-      <a-button @click="toggleSelection()">取消选择</a-button>
-    </div>
   </div>
 </template>
 
@@ -28,10 +29,8 @@ export default {
   },
   data () {
     return {
+      expandedRowKeys: [1, 3, 5, 7],
       columns: [
-        {
-          type: 'selection'
-        },
         {
           title: 'id',
           dataIndex: 'id',
@@ -69,28 +68,19 @@ export default {
           title: 'Long Column',
           dataIndex: 'address',
           key: 'address 4',
-          ellipsis: true,
-          width: 300,
-          fixed: 'right',
+          ellipsis: true
         }
       ],
-      list: mockData(0, 2000),
-      multipleSelection: []
+      list: mockData(0, 2000)
     }
   },
   methods: {
-    toggleSelection (rows) {
-      if (rows) {
-        rows.forEach(row => {
-          this.$refs.virtualTable.toggleRowSelection(row)
-        });
+    onTableExpand (expanded, record) {
+      if (expanded) {
+        this.expandedRowKeys.push(record.id)
       } else {
-        this.$refs.virtualTable.clearSelection()
+        this.expandedRowKeys = this.expandedRowKeys.filter(key => key !== record.id)
       }
-    },
-    handleSelectionChange (val) {
-      console.log('multipleSelection', val)
-      this.multipleSelection = val
     }
   }
 }

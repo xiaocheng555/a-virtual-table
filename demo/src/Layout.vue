@@ -91,6 +91,14 @@ export default {
           title: '动态开启虚拟滚动',
           path: '/VirtualizedDemo'
         },
+        {
+          title: '展开行',
+          path: '/ExpandDemo'
+        },
+        // {
+        //   title: '树形结构（有bug未解决）',
+        //   path: '/TreeDemo'
+        // },
         // {
         //   path: '/AntTable',
         //   title: '原来a-table'
