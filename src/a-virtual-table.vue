@@ -1,14 +1,19 @@
 <template>
-  <a-table
-    v-bind="$attrs"
-    v-on="$listeners"
-    :pagination="false"
-    :columns="tableColumns"
-    :data-source="renderData">
-    <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="text">
-      <slot :name="slot" v-bind="typeof text === 'object' ? text : {text}"></slot>
-    </template>
-  </a-table>
+  <div>
+    <a-table
+      v-bind="$attrs"
+      v-on="$listeners"
+      :pagination="false"
+      :columns="tableColumns"
+      :data-source="renderData">
+      <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="text">
+        <slot :name="slot" v-bind="typeof text === 'object' ? text : {text}"></slot>
+      </template>
+    </a-table>
+    <div class="ant-table-append" ref="append" v-show="!isHideAppend">
+      <slot name="append"></slot>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -46,6 +51,9 @@ function getScrollTop (el) {
 function getOffsetHeight (el) {
   return el === window ? window.innerHeight : el.offsetHeight
 }
+
+// 表格body class名称
+const TableBodyClassNames = ['.ant-table-scroll .ant-table-body', '.ant-table-fixed-left .ant-table-body-inner', '.ant-table-fixed-right .ant-table-body-inner']
 
 export default {
   inheritAttrs: false,
@@ -87,6 +95,11 @@ export default {
     dynamic: {
       type: Boolean,
       default: true
+    },
+    // 是否开启虚拟滚动
+    virtualized: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -97,7 +110,8 @@ export default {
       renderData: [],
       // 兼容多选
       isCheckedAll: false, // 全选
-      isCheckedImn: false // 控制半选样式
+      isCheckedImn: false, // 控制半选样式
+      isHideAppend: false
     }
   },
   computed: {
@@ -159,6 +173,8 @@ export default {
   methods: {
     // 初始化数据
     initData () {
+      // 是否是表格内部滚动
+      this.isInnerScroll = false
       this.scroller = this.getScroller()
       this.toTop = this.$el.getBoundingClientRect().top - this.scroller.getBoundingClientRect().top
 
@@ -184,6 +200,7 @@ export default {
       }
       // 如果表格是固定高度，则获取表格内的滚动节点，否则获取父层滚动节点
       if (this.$attrs.scroll && this.$attrs.scroll.y) {
+        this.isInnerScroll = true
         return this.$el.querySelector('.ant-table-body')
       } else {
         return getParentScroller(this.$el)
@@ -192,6 +209,8 @@ export default {
 
     // 处理滚动事件
     handleScroll () {
+      if (!this.virtualized) return
+
       // 更新当前尺寸（高度）
       this.updateSizes()
       // 计算renderData
@@ -223,7 +242,8 @@ export default {
       const { scroller, buffer, dataSource: data } = this
       // 计算可视范围顶部、底部
       const top = getScrollTop(scroller) - buffer - this.toTop
-      const bottom = getScrollTop(scroller) + getOffsetHeight(scroller) + buffer - this.toTop
+      const scrollerHeight = this.isInnerScroll ? this.$attrs.scroll.y : getOffsetHeight(scroller)
+      const bottom = getScrollTop(scroller) + scrollerHeight + buffer - this.toTop
 
       let start
       let end
@@ -280,9 +300,7 @@ export default {
       const offsetTop = this.getItemOffsetTop(this.start)
 
       // 设置dom位置
-      const classNames = ['.ant-table-scroll .ant-table-body', '.ant-table-fixed-left .ant-table-body-inner', '.ant-table-fixed-right .ant-table-body-inner']
-      // const classNames = []
-      classNames.forEach(className => {
+      TableBodyClassNames.forEach(className => {
         const el = this.$el.querySelector(className)
         if (!el) return
 
@@ -386,12 +404,69 @@ export default {
         this.isCheckedImn = true
       }
       this.emitSelectionChange()
+    },
+    // 渲染全部数据
+    renderAllData () {
+      this.renderData = this.dataSource
+      this.$emit('change', this.dataSource, 0, this.dataSource.length - 1)
+
+      this.$nextTick(() => {
+        // 清除撑起的高度和位置
+        TableBodyClassNames.forEach(className => {
+          const el = this.$el.querySelector(className)
+          if (!el) return
+
+          if (el.wrapEl) {
+            // 设置高度
+            el.wrapEl.style.height = 'auto'
+            // 设置transform撑起高度
+            el.innerEl.style.transform = `translateY(${0}px)`
+          }
+        })
+      })
+    },
+    // 执行update方法更新虚拟滚动，且每次nextTick只能执行一次【在数据大于100条开启虚拟滚动时，由于监听了data、virtualized会连续触发两次update方法：第一次update时，（updateSize）计算尺寸里的渲染数据（renderData）与表格行的dom是一一对应，之后会改变渲染数据（renderData）的值；而第二次执行update时，renderData改变了，而表格行dom未改变，导致renderData与dom不一一对应，从而位置计算错误，最终渲染的数据对应不上。因此使用每次nextTick只能执行一次来避免bug发生】
+    doUpdate () {
+      if (this.hasDoUpdate) return // nextTick内已经执行过一次就不执行
+      if (!this.scroller) return // scroller不存在说明未初始化完成，不执行
+
+      // 启动虚拟滚动的瞬间，需要暂时隐藏el-table__append-wrapper里的内容，不然会导致滚动位置一直到append的内容处
+      this.isHideAppend = true
+      this.update()
+      this.hasDoUpdate = true
+      this.$nextTick(() => {
+        this.hasDoUpdate = false
+        this.isHideAppend = false
+      })
+    }
+  },
+  watch: {
+    dataSource () {
+      if (!this.virtualized) {
+        this.renderAllData()
+      } else {
+        this.doUpdate()
+      }
+    },
+    virtualized: {
+      immediate: true,
+      handler (val) {
+        if (!val) {
+          this.renderAllData()
+        } else {
+          this.doUpdate()
+        }
+      }
     }
   },
   created () {
     this.$nextTick(() => {
       this.initData()
     })
+  },
+  mounted () {
+    const appendEl = this.$refs.append
+    this.$el.querySelector('.ant-table-body').appendChild(appendEl)
   },
   beforeDestroy () {
     if (this.scroller) {

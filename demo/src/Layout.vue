@@ -81,7 +81,15 @@ export default {
         },
         {
           title: '滚动容器',
-          path: '/scrollerDemo'
+          path: '/ScrollerDemo'
+        },
+        {
+          title: '下拉加载',
+          path: '/Loadmore'
+        },
+        {
+          title: '动态开启虚拟滚动',
+          path: '/VirtualizedDemo'
         },
         // {
         //   path: '/AntTable',
