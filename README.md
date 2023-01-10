@@ -7,7 +7,14 @@
 
 demo & 源码：https://xiaocheng555.github.io/a-virtual-table/
 
-`<a-virtual-table>` 组件在 `src/a-virtual-table.vue` 目录。
+## 安装
+
+``` bash
+# for npm:
+$ npm i a-virtual-table -S
+# for yarn:
+$ yarn add a-virtual-table -S
+```
 
 ## 用法
 

@@ -14,7 +14,7 @@
 
 <script>
 import { mockData } from '@/utils'
-import AVirtualTable from '../../../src/a-virtual-table'
+import AVirtualTable from 'a-virtual-table'
 
 export default {
   components: {

@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import AVirtualTable from '../../../src/a-virtual-table'
+import AVirtualTable from 'a-virtual-table'
 import InfiniteLoading from 'vue-infinite-loading'
 
 export default {

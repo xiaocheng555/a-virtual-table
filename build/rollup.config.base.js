@@ -3,13 +3,12 @@ import { eslint } from 'rollup-plugin-eslint'
 import commonjs from 'rollup-plugin-commonjs'
 import autoprefixer from 'autoprefixer'
 import vue from 'rollup-plugin-vue'
-import babel from 'rollup-plugin-babel'
+import babel from '@rollup/plugin-babel'
 
 export default {
   input: './src/index.js',
   plugins: [
-    resolve({ extensions: ['.vue'] }),
-    commonjs(),
+    resolve({ extensions: ['.js', '.vue'] }),
     eslint({
       exclude: 'node_modules/**'
     }),
@@ -19,8 +18,10 @@ export default {
       }
     }),
     babel({
-      exclude: 'node_modules/**'
-    })
+      exclude: 'node_modules/**',
+      extensions: ['.js', '.vue']
+    }),
+    commonjs()
   ],
   // 外部模块
   external: ['vue', 'lodash']

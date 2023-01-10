@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import AVirtualTable from '../../../src/a-virtual-table'
+import AVirtualTable from 'a-virtual-table'
 
 let flag = 0
 function mockData (start, end, level = 1) {
