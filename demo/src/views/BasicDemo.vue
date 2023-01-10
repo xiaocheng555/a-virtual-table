@@ -22,7 +22,6 @@ export default {
   },
   data () {
     return {
-      selectedRowKeys: [],
       columns: [
         {
           title: 'Name',
@@ -69,7 +68,9 @@ export default {
           title: 'Long Column',
           dataIndex: 'address',
           key: 'address 4',
-          ellipsis: true
+          ellipsis: true,
+          width: 150,
+          fixed: 'right'
         }
       ],
       list: mockData(0, 2000)

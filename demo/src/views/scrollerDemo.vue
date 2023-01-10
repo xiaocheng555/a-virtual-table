@@ -30,7 +30,6 @@ export default {
   data () {
     return {
       largeHeight: false,
-      selectedRowKeys: [],
       columns: [
         {
           title: 'Name',

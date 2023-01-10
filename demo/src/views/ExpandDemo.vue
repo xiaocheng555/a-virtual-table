@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-alert type="warning" show-icon>
+    <el-alert type="warning">
       不支持使用 <i>:expandedRowKeys.sync="expandedRowKeys" 方式</i>
     </el-alert>
     <a-virtual-table

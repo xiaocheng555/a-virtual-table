@@ -52,6 +52,15 @@ function getOffsetHeight (el) {
   return el === window ? window.innerHeight : el.offsetHeight
 }
 
+// 滚动到某个位置
+function scrollToY (el, y) {
+  if (el === window) {
+    window.scroll(0, y)
+  } else {
+    el.scrollTop = y
+  }
+}
+
 // 表格body class名称
 const TableBodyClassNames = ['.ant-table-scroll .ant-table-body', '.ant-table-fixed-left .ant-table-body-inner', '.ant-table-fixed-right .ant-table-body-inner']
 
@@ -388,6 +397,64 @@ export default {
       this.handleScroll()
     },
 
+    // 【外部调用】滚动到第几行
+    // （不太精确：滚动到第n行时，如果周围的表格行计算出真实高度后会更新高度，导致内容坍塌或撑起）
+    scrollTo (index, stop = false) {
+      const item = this.dataSource[index]
+      if (item && this.scroller) {
+        this.updateSizes()
+        this.calcRenderData()
+
+        this.$nextTick(() => {
+          const offsetTop = this.getItemOffsetTop(index)
+          scrollToY(this.scroller, offsetTop)
+
+          // 调用两次scrollTo，第一次滚动时，如果表格行初次渲染高度发生变化时，会导致滚动位置有偏差，此时需要第二次执行滚动，确保滚动位置无误
+          if (!stop) {
+            setTimeout(() => {
+              this.scrollTo(index, true)
+            }, 50)
+          }
+        })
+      }
+    },
+
+    // 渲染全部数据
+    renderAllData () {
+      this.renderData = this.dataSource
+      this.$emit('change', this.dataSource, 0, this.dataSource.length - 1)
+
+      this.$nextTick(() => {
+        // 清除撑起的高度和位置
+        TableBodyClassNames.forEach(className => {
+          const el = this.$el.querySelector(className)
+          if (!el) return
+
+          if (el.wrapEl) {
+            // 设置高度
+            el.wrapEl.style.height = 'auto'
+            // 设置transform撑起高度
+            el.innerEl.style.transform = `translateY(${0}px)`
+          }
+        })
+      })
+    },
+
+    // 执行update方法更新虚拟滚动，且每次nextTick只能执行一次【在数据大于100条开启虚拟滚动时，由于监听了data、virtualized会连续触发两次update方法：第一次update时，（updateSize）计算尺寸里的渲染数据（renderData）与表格行的dom是一一对应，之后会改变渲染数据（renderData）的值；而第二次执行update时，renderData改变了，而表格行dom未改变，导致renderData与dom不一一对应，从而位置计算错误，最终渲染的数据对应不上。因此使用每次nextTick只能执行一次来避免bug发生】
+    doUpdate () {
+      if (this.hasDoUpdate) return // nextTick内已经执行过一次就不执行
+      if (!this.scroller) return // scroller不存在说明未初始化完成，不执行
+
+      // 启动虚拟滚动的瞬间，需要暂时隐藏el-table__append-wrapper里的内容，不然会导致滚动位置一直到append的内容处
+      this.isHideAppend = true
+      this.update()
+      this.hasDoUpdate = true
+      this.$nextTick(() => {
+        this.hasDoUpdate = false
+        this.isHideAppend = false
+      })
+    },
+
     // 多选：兼容表格clearSelection方法
     clearSelection () {
       this.dataSource.forEach(row => this.$set(row, '$v_checked', false))
@@ -432,40 +499,6 @@ export default {
         this.isCheckedImn = true
       }
       this.emitSelectionChange()
-    },
-    // 渲染全部数据
-    renderAllData () {
-      this.renderData = this.dataSource
-      this.$emit('change', this.dataSource, 0, this.dataSource.length - 1)
-
-      this.$nextTick(() => {
-        // 清除撑起的高度和位置
-        TableBodyClassNames.forEach(className => {
-          const el = this.$el.querySelector(className)
-          if (!el) return
-
-          if (el.wrapEl) {
-            // 设置高度
-            el.wrapEl.style.height = 'auto'
-            // 设置transform撑起高度
-            el.innerEl.style.transform = `translateY(${0}px)`
-          }
-        })
-      })
-    },
-    // 执行update方法更新虚拟滚动，且每次nextTick只能执行一次【在数据大于100条开启虚拟滚动时，由于监听了data、virtualized会连续触发两次update方法：第一次update时，（updateSize）计算尺寸里的渲染数据（renderData）与表格行的dom是一一对应，之后会改变渲染数据（renderData）的值；而第二次执行update时，renderData改变了，而表格行dom未改变，导致renderData与dom不一一对应，从而位置计算错误，最终渲染的数据对应不上。因此使用每次nextTick只能执行一次来避免bug发生】
-    doUpdate () {
-      if (this.hasDoUpdate) return // nextTick内已经执行过一次就不执行
-      if (!this.scroller) return // scroller不存在说明未初始化完成，不执行
-
-      // 启动虚拟滚动的瞬间，需要暂时隐藏el-table__append-wrapper里的内容，不然会导致滚动位置一直到append的内容处
-      this.isHideAppend = true
-      this.update()
-      this.hasDoUpdate = true
-      this.$nextTick(() => {
-        this.hasDoUpdate = false
-        this.isHideAppend = false
-      })
     }
   },
   watch: {

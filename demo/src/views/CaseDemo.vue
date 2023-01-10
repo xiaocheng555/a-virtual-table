@@ -1,6 +1,15 @@
 <template>
   <div>
+    <div>
+      <el-input style="width: 300px;" type="number" placeholder="滚动到第几行" v-model="jumpIndex">
+        <el-button slot="append" @click="scrollToRow(jumpIndex)">滚动{{jumpIndex}}</el-button>
+      </el-input>
+      &nbsp;
+      数据总数量：<el-input style="width: 200px;" type="number" placeholder="数据条数" v-model="count"></el-input>
+    </div>
     <a-virtual-table
+      ref="aVirtualTable"
+      :loading="loading"
       :columns="columns"
       :data-source="list"
       :itemSize="54"
@@ -22,16 +31,17 @@ export default {
   },
   data () {
     return {
+      count: 2000,
+      jumpIndex: 200,
+      loading: false,
       columns: [
         {
-          title: '索引',
-          index: true,
-          width: 150
-        },
-        {
-          title: '自定义索引',
-          index: (index) => index * 2,
-          width: 150
+          title: 'Name',
+          dataIndex: 'name',
+          key: 'name',
+          scopedSlots: { customRender: 'name' },
+          // fixed: 'left',
+          width: 200
         },
         {
           title: 'id',
@@ -72,11 +82,31 @@ export default {
           key: 'address 4',
           ellipsis: true,
           width: 150,
-          fixed: 'right',
+          fixed: 'right'
         }
       ],
-      list: mockData(0, 2000)
+      list: []
     }
+  },
+  methods: {
+    fetchData () {
+      this.loading = true
+      setTimeout(() => {
+        this.list = mockData(0, this.count)
+        this.loading = false
+      }, 1000)
+    },
+    scrollToRow (index) {
+      this.$refs.aVirtualTable.scrollTo(index)
+    }
+  },
+  watch: {
+    count () {
+      this.fetchData()
+    }
+  },
+  created () {
+    this.fetchData()
   }
 }
 </script>

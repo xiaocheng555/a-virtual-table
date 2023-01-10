@@ -23,7 +23,6 @@ export default {
   },
   data () {
     return {
-      selectedRowKeys: [],
       columns: [
         {
           title: 'Name',
@@ -35,12 +34,13 @@ export default {
         },
         {
           title: '多表头',
+          key: 'head',
           children: [
             {
               title: 'id',
               dataIndex: 'id',
               key: 'id',
-              width: 100
+              width: 100,
             },
             {
               title: 'text',
@@ -76,7 +76,7 @@ export default {
           dataIndex: 'address',
           key: 'address 4',
           ellipsis: true,
-          fixed: 'right',
+          // fixed: 'right',
         }
       ],
       list: mockData(0, 2000)

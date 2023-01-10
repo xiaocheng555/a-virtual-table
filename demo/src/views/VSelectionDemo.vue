@@ -71,7 +71,7 @@ export default {
           key: 'address 4',
           ellipsis: true,
           width: 300,
-          fixed: 'right',
+          // fixed: 'right',
         }
       ],
       list: mockData(0, 2000),

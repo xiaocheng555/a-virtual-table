@@ -68,6 +68,10 @@ export default {
       menus: [
         '基础',
         {
+          title: '案例',
+          path: '/CaseDemo'
+        },
+        {
           title: '基础表格',
           path: '/BasicDemo'
         },

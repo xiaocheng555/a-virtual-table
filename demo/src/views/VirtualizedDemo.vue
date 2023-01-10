@@ -66,7 +66,6 @@ export default {
       list: [],
       count: 0,
       loading: true,
-      selectedRowKeys: [],
       renderData: [],
       loadmoreVisible: true
     }
