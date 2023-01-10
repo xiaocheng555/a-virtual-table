@@ -124,5 +124,4 @@ export default {
 | 事件名称 | 说明 | 参数 |
 |---------- |-------- |---------- |
 | change | 计算完成真实显示的表格行数 | (renderData, start, end)：renderData 真实渲染的数据，start和end指的是渲染的数据在总数据的开始到结束的区间范围 |
-| current-change | 虚拟表格单选选中事件 | currentRow |
 | selection-change | 虚拟表格多选选项发生更改时触发事件 | selectedRows |
