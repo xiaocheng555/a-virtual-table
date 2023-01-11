@@ -1,10 +1,10 @@
 {
   "name": "a-virtual-table",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "The virtual scrolling component developed based on the Table component of Ant Design supports dynamic height and solves the problem of scrolling stuck when the amount of data is large.",
-  "main": "dist/a-virtual-table .umd.js",
-  "module": "dist/a-virtual-table .es.js",
-  "unpkg": "dist/a-virtual-table .min.js",
+  "main": "dist/a-virtual-table.umd.js",
+  "module": "dist/a-virtual-table.es.js",
+  "unpkg": "dist/a-virtual-table.min.js",
   "scripts": {
     "build:umd": "rollup --config ./build/rollup.config.umd.js",
     "build:browser": "rollup --config ./build/rollup.config.browser.js",
@@ -21,6 +21,10 @@
   ],
   "author": "xiaocheng555",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiaocheng555/a-virtual-table.git"
+  },
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",

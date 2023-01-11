@@ -64,6 +64,8 @@ function scrollToY (el, y) {
 // 表格body class名称
 const TableBodyClassNames = ['.ant-table-scroll .ant-table-body', '.ant-table-fixed-left .ant-table-body-inner', '.ant-table-fixed-right .ant-table-body-inner']
 
+let checkOrder = 0 // 多选：记录多选选项改变的顺序
+
 export default {
   inheritAttrs: false,
   name: 'a-virtual-table',
@@ -455,38 +457,29 @@ export default {
       })
     },
 
-    // 多选：兼容表格clearSelection方法
-    clearSelection () {
-      this.dataSource.forEach(row => this.$set(row, '$v_checked', false))
-      this.isCheckedAll = false
-      this.isCheckedImn = false
-      this.emitSelectionChange()
-    },
-
-    // 多选：兼容表格toggleRowSelection方法
-    toggleRowSelection (row, selected) {
-      const val = typeof selected === 'boolean' ? selected : !row.$v_checked
-      this.onCheckRow(row, val)
-    },
-
-    // 多选：兼容表格selection-change事件
-    emitSelectionChange () {
-      const selection = this.dataSource.filter(row => row.$v_checked)
-      this.$emit('selection-change', selection)
-    },
-
     // 兼容多选：选择表格所有行
     onCheckAllRows (val) {
       val = this.isCheckedImn ? true : val
-      this.dataSource.forEach(row => this.$set(row, '$v_checked', val))
+      this.dataSource.forEach(row => {
+        if (row.$v_checked === val) return
+
+        this.$set(row, '$v_checked', val)
+        this.$set(row, '$v_checkedOrder', val ? checkOrder++ : undefined)
+      })
       this.isCheckedAll = val
       this.isCheckedImn = false
       this.emitSelectionChange()
+      // 取消全选，则重置checkOrder
+      if (val === false) checkOrder = 0
     },
 
     // 兼容多选：选择表格某行
-    onCheckRow (row, value) {
-      this.$set(row, '$v_checked', value)
+    onCheckRow (row, val) {
+      if (row.$v_checked === val) return
+
+      this.$set(row, '$v_checked', val)
+      this.$set(row, '$v_checkedOrder', val ? checkOrder++ : undefined)
+
       const checkedLen = this.dataSource.filter(row => row.$v_checked === true).length
       if (checkedLen === 0) {
         this.isCheckedAll = false
@@ -499,6 +492,24 @@ export default {
         this.isCheckedImn = true
       }
       this.emitSelectionChange()
+    },
+
+    // 多选：兼容表格selection-change事件
+    emitSelectionChange () {
+      const selection = this.dataSource.filter(row => row.$v_checked).sort((a, b) => a.$v_checkedOrder - b.$v_checkedOrder)
+      this.$emit('selection-change', selection)
+    },
+
+    // 多选：兼容表格toggleRowSelection方法
+    toggleRowSelection (row, selected) {
+      const val = typeof selected === 'boolean' ? selected : !row.$v_checked
+      this.onCheckRow(row, val)
+    },
+
+    // 多选：兼容表格clearSelection方法
+    clearSelection () {
+      this.isCheckedImn = false
+      this.onCheckAllRows(false)
     }
   },
   watch: {
