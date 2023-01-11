@@ -58,13 +58,13 @@ export default {
         {
           title: 'id',
           dataIndex: 'id',
-          key: 'id',
+          key: 'id2',
           width: 100
         },
         {
           title: 'text',
           dataIndex: 'text',
-          key: 'text',
+          key: 'text2',
           width: 400
         },
         {

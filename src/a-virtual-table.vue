@@ -18,6 +18,8 @@
 
 <script>
 import throttle from 'lodash/throttle'
+import Checkbox from 'ant-design-vue/lib/checkbox'
+import Table from 'ant-design-vue/lib/table'
 
 // 判断是否是滚动容器
 function isScroller (el) {
@@ -69,6 +71,10 @@ let checkOrder = 0 // 多选：记录多选选项改变的顺序
 export default {
   inheritAttrs: false,
   name: 'a-virtual-table',
+  components: {
+    ACheckbox: Checkbox,
+    ATable: Table
+  },
   props: {
     dataSource: {
       type: Array,
