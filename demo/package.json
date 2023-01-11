@@ -1,5 +1,5 @@
 {
-  "name": "a-virtual-table",
+  "name": "a-virtual-table-demo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,13 +11,13 @@
     "publish": "npm run build && npm run deploy"
   },
   "dependencies": {
+    "a-virtual-table": "^1.0.3",
     "ant-design-vue": "^1.7.8",
     "core-js": "^3.8.3",
     "el-table-infinite-scroll": "^2.0.0",
     "element-ui": "^2.15.9",
     "highlight.js": "^11.7.0",
     "install": "^0.13.0",
-    "lodash": "^4.17.21",
     "vue": "^2.6.14",
     "vue-drag-resize": "^1.5.4",
     "vue-infinite-loading": "^2.4.5",
