@@ -89,7 +89,7 @@ export default {
       }
     },
     handleSelectionChange (val) {
-      console.log('multipleSelection', val)
+      console.log('multipleSelection', val, JSON.stringify(val.map(i => i.id).join('，')))
       this.multipleSelection = val
     }
   }
