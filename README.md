@@ -132,3 +132,12 @@ export default {
 |---------- |-------- |---------- |
 | change | 计算完成真实显示的表格行数 | (renderData, start, end)：renderData 真实渲染的数据，start和end指的是渲染的数据在总数据的开始到结束的区间范围 |
 | selection-change | 虚拟表格多选选项发生更改时触发事件 | selectedRows |
+
+
+## 更新内容
+
+2023-1-13
+
+* 修复滚动容器设置为window时报错
+
+* 修复指定滚动容器，偶现滚动时表头会一直在

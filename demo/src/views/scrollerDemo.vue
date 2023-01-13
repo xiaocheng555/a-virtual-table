@@ -6,13 +6,13 @@
       点击改变高度
     </p>
     <a-virtual-table
+      bordered
       ref="virtualTable"
       :columns="columns"
       :data-source="list"
       :itemSize="54"
       keyProp="id"
       row-key="id"
-      scroller="html"
       :scroll="{ x: 1300 }">
       <a slot="name" slot-scope="{text}">{{ text }}===</a>
     </a-virtual-table>
@@ -110,6 +110,9 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
-
+<style lang='less'>
+body, html {
+  height: 100%;
+  overflow: auto;
+}
 </style>

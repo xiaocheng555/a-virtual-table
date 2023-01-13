@@ -198,7 +198,7 @@ export default {
       // 是否是表格内部滚动
       this.isInnerScroll = false
       this.scroller = this.getScroller()
-      this.toTop = this.$el.getBoundingClientRect().top - this.scroller.getBoundingClientRect().top
+      this.setToTop()
 
       // 首次需要执行2次handleScroll：因为第一次计算renderData时表格高度未确认导致计算不准确；第二次执行时，表格高度确认后，计算renderData是准确的
       this.handleScroll()
@@ -211,10 +211,21 @@ export default {
       window.addEventListener('resize', this.onScroll)
     },
 
+    // 设置表格到滚动容器的距离
+    setToTop () {
+      if (this.isInnerScroll) {
+        this.toTop = 0
+      } else {
+        this.toTop = this.$el.getBoundingClientRect().top - (this.scroller === window ? 0 : this.scroller.getBoundingClientRect().top) + getScrollTop(this.scroller)
+      }
+    },
+
     // 获取滚动元素
     getScroller () {
       let el
       if (this.scrollBox) {
+        if (this.scrollBox === 'window' || this.scrollBox === window) return window
+
         el = document.querySelector(this.scrollBox)
         if (!el) throw new Error(` scrollBox prop: '${this.scrollBox}' is not a valid selector`)
         if (!isScroller(el)) console.warn(`Warning! scrollBox prop: '${this.scrollBox}' is not a scroll element`)
@@ -400,8 +411,7 @@ export default {
 
     // 【外部调用】更新
     update () {
-      // console.log('update')
-      this.toTop = this.$el.getBoundingClientRect().top - this.scroller.getBoundingClientRect().top
+      this.setToTop()
       this.handleScroll()
     },
 
