@@ -162,3 +162,5 @@ export default {
 2023-1-15
 
 * 支持 `keep-alive` 缓存
+
+* npm 1.0.6版本发版

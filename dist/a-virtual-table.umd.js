@@ -838,6 +838,10 @@
         var _this2 = this;
         // 是否是表格内部滚动
         this.isInnerScroll = false;
+        // 滚动容器滚动位置
+        this.scrollTop = 0;
+        // 组件是否deactivated状态
+        this.isDeactivated = false;
         this.scroller = this.getScroller();
         this.setToTop();
 
@@ -879,7 +883,12 @@
       },
       // 处理滚动事件
       handleScroll: function handleScroll() {
-        if (!this.virtualized) return;
+        // 如果组件失活，则不再执行handleScroll；否则外部容器滚动情况下记录的scrollTop会是0
+        if (this.isDeactivated) return;
+        if (!this.virtualized) {
+          this.scrollTop = getScrollTop(this.scroller); // 记录scrollTop
+          return;
+        }
 
         // 更新当前尺寸（高度）
         this.updateSizes();
@@ -932,9 +941,10 @@
           buffer = this.buffer,
           data = this.dataSource;
         // 计算可视范围顶部、底部
-        var top = getScrollTop(scroller) - buffer - this.toTop;
+        this.scrollTop = getScrollTop(scroller); // 记录scrollTop
+        var top = this.scrollTop - buffer - this.toTop;
         var scrollerHeight = this.isInnerScroll ? this.$attrs.scroll.y : getOffsetHeight(scroller);
-        var bottom = getScrollTop(scroller) + scrollerHeight + buffer - this.toTop;
+        var bottom = this.scrollTop + scrollerHeight + buffer - this.toTop;
         var start;
         var end;
         if (!this.dynamic) {
@@ -1152,6 +1162,11 @@
       clearSelection: function clearSelection() {
         this.isCheckedImn = false;
         this.onCheckAllRows(false);
+      },
+      // 恢复y轴滚动位置
+      restoreScrollY: function restoreScrollY() {
+        if (!this.scroller) return;
+        this.scroller.scrollTop = this.scrollTop;
       }
     },
     watch: {
@@ -1188,6 +1203,13 @@
         this.scroller.removeEventListener('scroll', this.onScroll);
         window.removeEventListener('resize', this.onScroll);
       }
+    },
+    activated: function activated() {
+      this.isDeactivated = false;
+      this.restoreScrollY();
+    },
+    deactivated: function deactivated() {
+      this.isDeactivated = true;
     }
   };
 
