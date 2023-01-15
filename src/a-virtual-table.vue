@@ -197,6 +197,11 @@ export default {
     initData () {
       // 是否是表格内部滚动
       this.isInnerScroll = false
+      // 滚动容器滚动位置
+      this.scrollTop = 0
+      // 组件是否deactivated状态
+      this.isDeactivated = false
+
       this.scroller = this.getScroller()
       this.setToTop()
 
@@ -242,7 +247,12 @@ export default {
 
     // 处理滚动事件
     handleScroll () {
-      if (!this.virtualized) return
+      // 如果组件失活，则不再执行handleScroll；否则外部容器滚动情况下记录的scrollTop会是0
+      if (this.isDeactivated) return
+      if (!this.virtualized) {
+        this.scrollTop = getScrollTop(this.scroller) // 记录scrollTop
+        return
+      }
 
       // 更新当前尺寸（高度）
       this.updateSizes()
@@ -297,9 +307,10 @@ export default {
     calcRenderData () {
       const { scroller, buffer, dataSource: data } = this
       // 计算可视范围顶部、底部
-      const top = getScrollTop(scroller) - buffer - this.toTop
+      this.scrollTop = getScrollTop(scroller) // 记录scrollTop
+      const top = this.scrollTop - buffer - this.toTop
       const scrollerHeight = this.isInnerScroll ? this.$attrs.scroll.y : getOffsetHeight(scroller)
-      const bottom = getScrollTop(scroller) + scrollerHeight + buffer - this.toTop
+      const bottom = this.scrollTop + scrollerHeight + buffer - this.toTop
 
       let start
       let end
@@ -526,6 +537,12 @@ export default {
     clearSelection () {
       this.isCheckedImn = false
       this.onCheckAllRows(false)
+    },
+    // 恢复y轴滚动位置
+    restoreScrollY () {
+      if (!this.scroller) return
+
+      this.scroller.scrollTop = this.scrollTop
     }
   },
   watch: {
@@ -561,6 +578,13 @@ export default {
       this.scroller.removeEventListener('scroll', this.onScroll)
       window.removeEventListener('resize', this.onScroll)
     }
+  },
+  activated () {
+    this.isDeactivated = false
+    this.restoreScrollY()
+  },
+  deactivated () {
+    this.isDeactivated = true
   }
 }
 </script>

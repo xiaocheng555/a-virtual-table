@@ -110,7 +110,7 @@ export default {
 | dataSource    | 总数据 | Array | 必填 |  |
 | keyProp | key值，data数据中的唯一id【⚠️若keyProp未设置或keyProp值不唯一，可能导致表格空数据或者滚动时渲染的数据断层、不连贯】 | string | — | id |
 | itemSize | 每一行的预估高度 | number | — | 60 |
-| scrollBox | 指定滚动容器；在指定滚动容器时，如果表格设置了height高度，则滚动容器为表格内的滚动容器；如果表格为设置height高度，则自动获取父层以外的滚动容器，直至window容器为止 | string | — | - |
+| scrollBox | 指定滚动容器；在指定滚动容器时，如果表格设置了height高度，则滚动容器为表格内的滚动容器；如果表格为设置height高度，则自动获取父层以外的滚动容器，直至window容器为止 | string | 'window'、css选择器 | - |
 | buffer | 顶部和底部缓冲区域，值越大显示表格的行数越多 | Number | — | 200 |
 | throttleTime | 滚动事件的节流时间 | number | — | 10 |
 | dynamic | 动态获取表格行高度，默认开启。设置为false时，则以itemSize为表格行的真实高度，能大大减少虚拟滚动计算量，减少滚动白屏；如果itemSize与表格行的真实高度不一致，可能导致滚动时表格数据错乱 | boolean | — | true |
@@ -134,6 +134,21 @@ export default {
 | selection-change | 虚拟表格多选选项发生更改时触发事件 | selectedRows |
 
 
+## el-table-virtual-scroll 组件注意事项
+
+* 使用组件前，请确保项目中有引入 `ant-design-vue` 组件库。
+
+* 确保keyProp传入值是唯一值，使用类似于rowKey。建议keyProp、rowKey使用相同值。
+
+* 不支持 `<a-table>` 原来的多选模式，需要在 column列中设置 `type="selection"`来设置多选，详见demo。
+
+* 扩展行中不支持使用 `:expandedRowKeys.sync="expandedRowKeys"` 的sync双向绑定，详见demo。
+
+* 树形结构暂无需求，有需求再兼容。
+
+* 尽量减少使用左右固定列（或只使用右固定列），滚动会更流畅
+
+
 ## 更新内容
 
 2023-1-13
@@ -143,3 +158,7 @@ export default {
 * 修复指定滚动容器，偶现滚动时表头会一直在
 
 * npm 1.0.5版本发版
+
+2023-1-15
+
+* 支持 `keep-alive` 缓存
