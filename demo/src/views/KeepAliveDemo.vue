@@ -1,13 +1,10 @@
 <template>
   <div>
     <div>
-      <el-input style="width: 300px;" type="number" placeholder="滚动到第几行" v-model="jumpIndex">
-        <el-button slot="append" @click="scrollToRow(jumpIndex)">滚动{{jumpIndex}}</el-button>
-      </el-input>
-      &nbsp;
-      数据总数量：<el-input style="width: 200px;" type="number" placeholder="数据条数" v-model="count"></el-input>
+      <el-switch v-model="innerScroll"></el-switch>内部滚动
     </div>
     <a-virtual-table
+      :key="innerScroll"
       ref="aVirtualTable"
       :loading="loading"
       :columns="columns"
@@ -15,7 +12,7 @@
       :itemSize="54"
       keyProp="id"
       row-key="id"
-      :scroll="{ x: 1300, y: 600 }">
+      :scroll="{ x: 1300, y: innerScroll ? 600 : undefined}">
       <a slot="name" slot-scope="{text}">{{ text }}===</a>
     </a-virtual-table>
   </div>
@@ -32,6 +29,7 @@ export default {
   },
   data () {
     return {
+      innerScroll: true,
       count: 2000,
       jumpIndex: 200,
       loading: false,

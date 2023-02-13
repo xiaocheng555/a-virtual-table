@@ -164,3 +164,7 @@ export default {
 * 支持 `keep-alive` 缓存
 
 * npm 1.0.6版本发版
+
+2023-1-15
+
+* `keep-alive` 缓存时，修复固定列x轴滚动位置未恢复

@@ -24,6 +24,7 @@ import { mockData } from '@/utils'
 import AVirtualTable from 'a-virtual-table'
 
 export default {
+  name: 'KeepAliveDemo',
   components: {
     AVirtualTable
   },
@@ -92,7 +93,8 @@ export default {
           title: 'Long Column',
           dataIndex: 'address',
           key: 'address 4',
-          ellipsis: true
+          ellipsis: true,
+          fixed: 'right'
         }
       ],
       list: mockData(0, 2000)

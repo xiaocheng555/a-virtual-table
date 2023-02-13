@@ -49,6 +49,21 @@ function getScrollTop (el) {
   return el === window ? window.pageYOffset : el.scrollTop
 }
 
+// 获取容器滚动位置
+function getScrollLeft (el) {
+  return el === window ? window.pageXOffset : el.scrollLeft
+}
+
+// 设置容器滚动位置
+function setScrollTop (el, pos) {
+  return el === window ? window.scroll(window.pageXOffset, pos) : (el.scrollTop = pos)
+}
+
+// 设置容器滚动位置
+function setScrollLeft (el, pos) {
+  return el === window ? window.scroll(pos, window.pageYOffset) : (el.scrollLeft = pos)
+}
+
 // 获取容器高度
 function getOffsetHeight (el) {
   return el === window ? window.innerHeight : el.offsetHeight
@@ -197,13 +212,14 @@ export default {
     initData () {
       // 是否是表格内部滚动
       this.isInnerScroll = false
-      // 滚动容器滚动位置
-      this.scrollTop = 0
+      // 滚动容器滚动位置【0-滚动容器top；1-滚动容器left；2-表格滚动容器top；3-表格滚动容器left】
+      this.scrollPos = [0, 0, 0, 0]
       // 组件是否deactivated状态
       this.isDeactivated = false
 
       this.scroller = this.getScroller()
       this.setToTop()
+      this.recordTablePos()
 
       // 首次需要执行2次handleScroll：因为第一次计算renderData时表格高度未确认导致计算不准确；第二次执行时，表格高度确认后，计算renderData是准确的
       this.handleScroll()
@@ -212,7 +228,7 @@ export default {
       })
       // 监听事件
       this.onScroll = throttle(this.handleScroll, this.throttleTime)
-      this.scroller.addEventListener('scroll', this.onScroll)
+      this.scroller.addEventListener('scroll', this.onScroll, { passive: true })
       window.addEventListener('resize', this.onScroll)
     },
 
@@ -249,10 +265,11 @@ export default {
     handleScroll () {
       // 如果组件失活，则不再执行handleScroll；否则外部容器滚动情况下记录的scrollTop会是0
       if (this.isDeactivated) return
-      if (!this.virtualized) {
-        this.scrollTop = getScrollTop(this.scroller) // 记录scrollTop
-        return
-      }
+      // 记录scrollPos
+      this.scrollPos[0] = getScrollTop(this.scroller)
+      this.scrollPos[1] = getScrollLeft(this.scroller)
+
+      if (!this.virtualized) return
 
       // 更新当前尺寸（高度）
       this.updateSizes()
@@ -307,10 +324,9 @@ export default {
     calcRenderData () {
       const { scroller, buffer, dataSource: data } = this
       // 计算可视范围顶部、底部
-      this.scrollTop = getScrollTop(scroller) // 记录scrollTop
-      const top = this.scrollTop - buffer - this.toTop
+      const top = this.scrollPos[0] - buffer - this.toTop
       const scrollerHeight = this.isInnerScroll ? this.$attrs.scroll.y : getOffsetHeight(scroller)
-      const bottom = this.scrollTop + scrollerHeight + buffer - this.toTop
+      const bottom = this.scrollPos[0] + scrollerHeight + buffer - this.toTop
 
       let start
       let end
@@ -538,11 +554,39 @@ export default {
       this.isCheckedImn = false
       this.onCheckAllRows(false)
     },
-    // 恢复y轴滚动位置
+
+    // 记录表格x、y轴滚动位置
+    recordTablePos () {
+      if (!this.isInnerScroll) return
+
+      this.tableBodyEl = this.$el.querySelector('.ant-table-body')
+      this.onTableScroll = throttle(() => {
+        this.scrollPos[2] = getScrollTop(this.tableBodyEl)
+        this.scrollPos[3] = getScrollLeft(this.tableBodyEl)
+      }, 100)
+      this.tableBodyEl.addEventListener('scroll', this.onTableScroll, { passive: true })
+    },
+
+    // 恢复y轴滚动位置（仅支持表格内部滚动）
     restoreScrollY () {
       if (!this.scroller) return
 
-      this.scroller.scrollTop = this.scrollTop
+      // 恢复滚动容器滚动位置
+      const [top, left, top2, left2] = this.scrollPos
+      setScrollTop(this.scroller, top)
+      setScrollLeft(this.scroller, left)
+
+      // 如果是内部滚动且固定列，则固定列也需要恢复y轴滚动位置
+      if (this.isInnerScroll) {
+        const leftScroller = document.querySelector(TableBodyClassNames[1])
+        const rightScroller = document.querySelector(TableBodyClassNames[2])
+        if (leftScroller) setScrollTop(leftScroller, top)
+        if (rightScroller) setScrollTop(rightScroller, top)
+      } else {
+        // 恢复表格内滚动位置
+        setScrollTop(this.tableBodyEl, top2)
+        setScrollLeft(this.tableBodyEl, left2)
+      }
     }
   },
   watch: {
@@ -577,6 +621,9 @@ export default {
     if (this.scroller) {
       this.scroller.removeEventListener('scroll', this.onScroll)
       window.removeEventListener('resize', this.onScroll)
+    }
+    if (this.tableBodyEl) {
+      this.tableBodyEl.removeEventListener('scroll', this.onTableScroll)
     }
   },
   activated () {
