@@ -2,13 +2,12 @@
   <div>
     <a-table
       v-bind="$attrs"
-      v-on="$listeners"
       :pagination="false"
       :columns="tableColumns"
       :data-source="renderData">
-      <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="text">
-        <slot :name="slot" v-bind="typeof text === 'object' ? text : {text}"></slot>
-      </template>
+      <!-- <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="text">
+        <slot :name="slot" v-bind="typeof text === 'object' ? text : text"></slot>
+      </template> -->
     </a-table>
     <div class="ant-table-append" ref="append" v-show="!isHideAppend">
       <slot name="append"></slot>
@@ -16,7 +15,7 @@
   </div>
 </template>
 
-<script>
+<script lang="jsx">
 import throttle from 'lodash/throttle'
 
 // 判断是否是滚动容器
@@ -210,6 +209,7 @@ export default {
       this.isDeactivated = false
 
       this.scroller = this.getScroller()
+      console.log(this.scroller, 'this.scroller')
       this.setToTop()
       this.recordTablePos()
 
@@ -226,6 +226,7 @@ export default {
 
     // 获取滚动元素
     getScroller () {
+      debugger
       let el
       if (this.scrollBox) {
         el = document.querySelector(this.scrollBox)
