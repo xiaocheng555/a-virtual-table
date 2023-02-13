@@ -125,3 +125,39 @@ export default {
 |---------- |-------- |---------- |
 | change | 计算完成真实显示的表格行数 | (renderData, start, end)：renderData 真实渲染的数据，start和end指的是渲染的数据在总数据的开始到结束的区间范围 |
 | selection-change | 虚拟表格多选选项发生更改时触发事件 | selectedRows |
+
+
+## el-table-virtual-scroll 组件注意事项
+
+* 使用组件前，请确保项目中有引入 `ant-design-vue` 组件库。
+
+* 确保keyProp传入值是唯一值，使用类似于rowKey。建议keyProp、rowKey使用相同值。
+
+* 不支持 `<a-table>` 原来的多选模式，需要在 column列中设置 `type="selection"`来设置多选，详见demo。
+
+* 扩展行中不支持使用 `:expandedRowKeys.sync="expandedRowKeys"` 的sync双向绑定，详见demo。
+
+* 树形结构暂无需求，有需求再兼容。
+
+* 尽量减少使用左右固定列（或只使用右固定列），滚动会更流畅
+
+
+## 更新内容
+
+2023-1-13
+
+* 修复滚动容器设置为window时报错
+
+* 修复指定滚动容器，偶现滚动时表头会一直在
+
+* npm 1.0.5版本发版
+
+2023-1-15
+
+* 支持 `keep-alive` 缓存
+
+* npm 1.0.6版本发版
+
+2023-1-15
+
+* `keep-alive` 缓存时，修复固定列x轴滚动位置未恢复

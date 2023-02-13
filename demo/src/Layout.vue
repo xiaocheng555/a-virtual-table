@@ -99,6 +99,14 @@ export default {
           title: '展开行',
           path: '/ExpandDemo'
         },
+        {
+          title: 'keep-alive',
+          path: '/KeepAliveDemo'
+        },
+        {
+          title: 'test2',
+          path: '/test2',
+        },
         // {
         //   title: '树形结构（有bug未解决）',
         //   path: '/TreeDemo'

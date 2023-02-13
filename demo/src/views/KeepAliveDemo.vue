@@ -1,19 +1,18 @@
 <template>
   <div>
-    <p
-      :style="{height: largeHeight ? '600px' : '200px', background: 'pink'}"
-      @click="onHeightChange">
-      点击改变高度
-    </p>
+    <div>
+      <el-switch v-model="innerScroll"></el-switch>内部滚动
+    </div>
     <a-virtual-table
-      ref="virtualTable"
+      :key="innerScroll"
+      ref="aVirtualTable"
+      :loading="loading"
       :columns="columns"
       :data-source="list"
       :itemSize="54"
       keyProp="id"
       row-key="id"
-      scroller="html"
-      :scroll="{ x: 1300 }">
+      :scroll="{ x: 1300, y: innerScroll ? 600 : undefined}">
       <a slot="name" slot-scope="{text}">{{ text }}===</a>
     </a-virtual-table>
   </div>
@@ -21,7 +20,7 @@
 
 <script>
 import { mockData } from '@/utils'
-import AVirtualTable from '../../../src/a-virtual-table'
+import AVirtualTable from 'a-virtual-table'
 
 export default {
   name: 'KeepAliveDemo',
@@ -30,31 +29,18 @@ export default {
   },
   data () {
     return {
-      largeHeight: false,
+      innerScroll: true,
+      count: 2000,
+      jumpIndex: 200,
+      loading: false,
       columns: [
         {
           title: 'Name',
           dataIndex: 'name',
           key: 'name',
           scopedSlots: { customRender: 'name' },
+          // fixed: 'left',
           width: 200
-        },
-        {
-          title: '多表头',
-          children: [
-            {
-              title: 'id',
-              dataIndex: 'id',
-              key: 'id',
-              width: 100
-            },
-            {
-              title: 'text',
-              dataIndex: 'text',
-              key: 'text',
-              width: 400
-            }
-          ]
         },
         {
           title: 'id',
@@ -94,20 +80,32 @@ export default {
           dataIndex: 'address',
           key: 'address 4',
           ellipsis: true,
+          width: 150,
           fixed: 'right'
         }
       ],
-      list: mockData(0, 2000)
+      list: []
     }
   },
   methods: {
-    onHeightChange () {
-      this.largeHeight = !this.largeHeight
-      // 当滚动容器顶部内容高度变化很大时，需要更新虚拟滚动组件，避免出现表格出现一段空白内容
-      this.$nextTick(() => {
-        this.$refs.virtualTable.update()
-      })
+    fetchData () {
+      this.loading = true
+      setTimeout(() => {
+        this.list = mockData(0, this.count)
+        this.loading = false
+      }, 1000)
+    },
+    scrollToRow (index) {
+      this.$refs.aVirtualTable.scrollTo(index)
     }
+  },
+  watch: {
+    count () {
+      this.fetchData()
+    }
+  },
+  created () {
+    this.fetchData()
   }
 }
 </script>
