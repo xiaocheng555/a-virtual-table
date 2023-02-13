@@ -18,7 +18,7 @@ export default defineConfig({
     extensions: ['.vue', '.mjs', '.js', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),
-      'el-table-virtual-scroll-next': path.resolve('../src/index.js')
+      'a-virtual-table': path.resolve('../src/a-virtual-table.vue')
     }
   }
 })

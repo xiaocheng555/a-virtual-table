@@ -1,12 +1,6 @@
 <template>
   <div>
     <div>
-      <el-select style="width: 100px;" v-model="fixed">
-        <el-option :value="''" label="不固定"></el-option>
-        <el-option :value="'left'" label="固定左边"></el-option>
-        <el-option :value="'right'" label="固定右边"></el-option>
-      </el-select>
-      &nbsp;
       <el-input style="width: 300px;" type="number" placeholder="滚动到第几行" v-model="jumpIndex">
         <template #append>
           <el-button @click="scrollToRow(jumpIndex)">滚动{{jumpIndex}}</el-button>
@@ -15,117 +9,103 @@
       &nbsp;
       数据总数量：<el-input style="width: 200px;" type="number" placeholder="数据条数" v-model="count"></el-input>
     </div>
-    <virtual-scroll
-      ref="virtualScroll"
-      :data="list"
-      :item-size="62"
-      key-prop="id"
-      @change="onChange">
-      <el-table
-        v-loading="loading"
-        :data="virtualList1"
-        stripe
-        row-key="id"
-        height="600">
-        <!-- <virtual-column type="selection" width="60"></virtual-column> -->
-        <el-table-column label="id" prop="id"></el-table-column>
-        <el-table-column label="内容" width="260" prop="text"></el-table-column>
-        <el-table-column label="内容省略" width="260" prop="text" show-overflow-tooltip></el-table-column>
-        <el-table-column label="详情" min-width="260">
-          <template v-slot="{ row }">
-            <el-link @click="row.show = !row.show;">{{ row.show ? '隐藏' : '显示' }}</el-link>
-            <div v-if="row.show">{{ row.text2 }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="一级表头">
-          <el-table-column label="第n行" width="400" prop="id"></el-table-column>
-          <el-table-column label="第n行" width="400" prop="id"></el-table-column>
-          <el-table-column label="第n行" width="400" prop="id"></el-table-column>
-        </el-table-column>
-        <el-table-column label="操作" :fixed="fixed" width="260">
-          <template v-slot="{ row }">
-            {{ row.id }}
-            <el-button @click="onDel(row)">删除</el-button>
-            <el-button @click="onEdit(row)">编辑</el-button>
-          </template>
-        </el-table-column>
-        <!-- <div slot="append">
-          <el-divider>到底了~</el-divider>
-        </div> -->
-      </el-table>
-    </virtual-scroll>
-    <b>行数: {{ virtualList1.length }}</b>
+    <a-virtual-table
+      ref="aVirtualTable"
+      :loading="loading"
+      :columns="columns"
+      :data-source="list"
+      :itemSize="54"
+      keyProp="id"
+      row-key="id"
+      :scroll="{ x: 1300, y: 600 }">
+      <template #name="{text}">
+        <a>{{ text }}===</a>
+      </template>
+    </a-virtual-table>
   </div>
 </template>
 
 <script>
-import VirtualScroll from 'el-table-virtual-scroll-next'
-// import { VirtualColumn } from 'el-table-virtual-scroll-next'
 import { mockData } from '@/utils'
+import AVirtualTable from '../../../src/a-virtual-table'
 
 export default {
   components: {
-    VirtualScroll,
-    // VirtualColumn
+    AVirtualTable
   },
   data () {
     return {
       count: 2000,
-      fixed: '',
-      jumpIndex: 1999,
+      jumpIndex: 200,
       loading: false,
-      show: false,
-      list: [],
-      virtualList1: [],
-      isCheckedAll: false,
-      isCheckedImn: false
+      columns: [
+        {
+          title: 'Name',
+          dataIndex: 'name',
+          key: 'name',
+          slots: { customRender: 'name' },
+          // fixed: 'left',
+          width: 200
+        },
+        {
+          title: 'id',
+          dataIndex: 'id',
+          key: 'id',
+          width: 100
+        },
+        {
+          title: 'text',
+          dataIndex: 'text',
+          key: 'text',
+          width: 400
+        },
+        {
+          title: 'Address',
+          dataIndex: 'address',
+          key: 'address 1',
+          ellipsis: true,
+          width: 400
+        },
+        {
+          title: 'Long Column Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 2',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 3',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column',
+          dataIndex: 'address',
+          key: 'address 4',
+          ellipsis: true,
+          width: 150,
+          fixed: 'right'
+        }
+      ],
+      list: []
     }
   },
   methods: {
     fetchData () {
       this.loading = true
-      this.list = []
       setTimeout(() => {
         this.list = mockData(0, this.count)
         this.loading = false
       }, 1000)
     },
-    getRandomContent () {
-      const content = [
-        '这是一条测试数据',
-        '君不见黄河之水天上来，奔流到海不复回。',
-        '十年生死两茫茫',
-        '寻寻觅觅，冷冷清清，凄凄惨惨戚戚。',
-        '桃花坞里桃花庵，桃花庵里桃花仙；桃花仙人种桃树，又摘桃花卖酒钱。',
-        '明月几时有，把酒问青天。',
-        '槛菊愁烟兰泣露，罗幕轻寒，',
-        '寒蝉凄切，对长亭晚，骤雨初歇。都门帐饮无绪，留恋处，兰舟催发。执手相看泪眼，竟无语凝噎。念去去，千里烟波，暮霭沉沉楚天阔。多情自古伤离别，更那堪冷落清秋节！今宵酒醒何处？杨柳岸，晓风残月。此去经年，应是良辰好景虚设。便纵有千种风情，更与何人说？',
-        '红豆生南国，春来发几枝。',
-        '黄鹂'
-      ]
-      const i = Math.floor(Math.random() * 10)
-      return content[i]
-    },
     scrollToRow (index) {
-      this.$refs.virtualScroll.scrollTo(index)
-    },
-    onChange (renderData) {
-      console.log('onChange')
-      this.virtualList1 = renderData
-    },
-    onDel (row) {
-      const index = this.list.findIndex(item => item === row)
-      if (index > -1) {
-        this.list.splice(index, 1)
-      }
-    },
-    onEdit (row) {
-      row.text =  row.text + '__编辑'
+      this.$refs.aVirtualTable.scrollTo(index)
     }
   },
   watch: {
     count () {
-      this.$refs.virtualScroll?.reset?.()
       this.fetchData()
     }
   },
@@ -136,4 +116,5 @@ export default {
 </script>
 
 <style lang='less' scoped>
+
 </style>

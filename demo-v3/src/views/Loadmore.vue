@@ -7,11 +7,13 @@
       :data-source="list"
       :itemSize="54"
       keyProp="id"
-      :virtualized="list.length > 40"
       row-key="id"
       :scroll="{ x: 1300, y: 600 }">
+      <template #name="{text}">
+        <a>{{ text }}===</a>
+      </template>
       <template #append>
-        <div class="table-loading">
+        <div class="table-loading" v-if="!hasLoaded">
           <LoadingOutlined />
         </div>
       </template>

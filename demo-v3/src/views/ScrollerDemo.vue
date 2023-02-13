@@ -1,81 +1,102 @@
 <template>
-  <div class="scroller-box">
-    <h2>红色边框的是滚动容器</h2>
-    <p
+  <div>
+    <!-- <p
       :style="{height: largeHeight ? '600px' : '200px', background: 'pink'}"
       @click="onHeightChange">
       点击改变高度
-    </p>
-    <virtual-scroll
-      ref="virtualScroll"
-      :data="list"
-      :item-size="62"
-      scroll-box=".scroller-box"
-      key-prop="id"
-      @change="(virtualList) => tableData = virtualList">
-      <el-table
-        :data="tableData"
-        row-key="id"
-        border
-        style="width: 100%">
-        <el-table-column
-          prop="date"
-          label="日期"
-          width="150">
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="姓名"
-          width="420">
-        </el-table-column>
-        <el-table-column
-          prop="province"
-          label="省份"
-          width="320">
-        </el-table-column>
-        <el-table-column
-          prop="city"
-          label="市区"
-          width="320">
-        </el-table-column>
-        <el-table-column
-          prop="address"
-          label="地址"
-          width="300">
-        </el-table-column>
-        <el-table-column
-          prop="zip"
-          label="邮编"
-          width="320">
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          width="100">
-          <template v-slot="">
-            <el-button size="small">查看</el-button>
-            <el-button size="small">编辑</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </virtual-scroll>
-    <p>一些内容</p>
-    <p>一些内容</p>
+    </p> -->
+    <a-virtual-table
+      ref="virtualTable"
+      :columns="columns"
+      :data-source="list"
+      :itemSize="54"
+      keyProp="id"
+      row-key="id"
+      :scroll="{ x: 1300 }">
+      <a slot="name" slot-scope="{text}">{{ text }}===</a>
+    </a-virtual-table>
   </div>
 </template>
 
 <script>
-import VirtualScroll from 'el-table-virtual-scroll-next'
 import { mockData } from '@/utils'
+import AVirtualTable from '../../../src/a-virtual-table'
 
 export default {
+  name: 'KeepAliveDemo',
   components: {
-    VirtualScroll
+    AVirtualTable
   },
   data () {
     return {
-      list: mockData(0, 2000),
-      tableData: [],
-      largeHeight: false
+      largeHeight: false,
+      columns: [
+        {
+          title: 'Name',
+          dataIndex: 'name',
+          key: 'name',
+          slots: { customRender: 'name' },
+          width: 200
+        },
+        {
+          title: '多表头',
+          children: [
+            {
+              title: 'id',
+              dataIndex: 'id',
+              key: 'id',
+              width: 100
+            },
+            {
+              title: 'text',
+              dataIndex: 'text',
+              key: 'text',
+              width: 400
+            }
+          ]
+        },
+        {
+          title: 'id',
+          dataIndex: 'id',
+          key: 'id',
+          width: 100
+        },
+        {
+          title: 'text',
+          dataIndex: 'text',
+          key: 'text',
+          width: 400
+        },
+        {
+          title: 'Address',
+          dataIndex: 'address',
+          key: 'address 1',
+          ellipsis: true,
+          width: 400
+        },
+        {
+          title: 'Long Column Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 2',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 3',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column',
+          dataIndex: 'address',
+          key: 'address 4',
+          ellipsis: true,
+          fixed: 'right'
+        }
+      ],
+      list: mockData(0, 2000)
     }
   },
   methods: {
@@ -83,7 +104,7 @@ export default {
       this.largeHeight = !this.largeHeight
       // 当滚动容器顶部内容高度变化很大时，需要更新虚拟滚动组件，避免出现表格出现一段空白内容
       this.$nextTick(() => {
-        this.$refs.virtualScroll.update()
+        this.$refs.virtualTable.update()
       })
     }
   }
@@ -91,9 +112,5 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.scroller-box {
-  height: 700px;
-  overflow: auto;
-  border: 1px solid red;
-}
+
 </style>

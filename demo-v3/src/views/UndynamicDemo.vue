@@ -1,43 +1,88 @@
 <template>
   <div>
-    <virtual-scroll
-      ref="virtualScroll"
-      :data="list"
-      row-key="id"
-      :item-size="40"
-      key-prop="id"
+    <a-virtual-table
+      :columns="columns"
+      :data-source="list"
+      :itemSize="54"
       :dynamic="false"
-      :throttleTime="0"
-      @change="(virtualList) => tableData = virtualList">
-      <el-table
-        :data="tableData"
-        height="500"
-        style="width: 100%">
-        <el-table-column label="id" prop="id" width="180"></el-table-column>
-        <el-table-column label="日期" width="260" prop="date"></el-table-column>
-        <el-table-column label="内容省略" width="260" prop="text" show-overflow-tooltip></el-table-column>
-        <el-table-column label="内容" prop="text" show-overflow-tooltip></el-table-column>
-      </el-table>
-    </virtual-scroll>
+      keyProp="id"
+      row-key="id"
+      :scroll="{ x: 1300, y: 600 }">
+      <template #name="{text}">
+        <a>{{ text }}===</a>
+      </template>
+    </a-virtual-table>
   </div>
 </template>
 
 <script>
-import VirtualScroll from 'el-table-virtual-scroll-next'
 import { mockData } from '@/utils'
+import AVirtualTable from '../../../src/a-virtual-table'
 
 export default {
   components: {
-    VirtualScroll
+    AVirtualTable
   },
   data () {
     return {
-      list: mockData(0, 2000),
-      tableData: []
+      columns: [
+        {
+          title: 'Name',
+          dataIndex: 'name',
+          key: 'name',
+          slots: { customRender: 'name' },
+          width: 200
+        },
+        {
+          title: 'id',
+          dataIndex: 'id',
+          key: 'id',
+          width: 100
+        },
+        {
+          title: 'text',
+          dataIndex: 'text',
+          key: 'text',
+          ellipsis: true,
+          width: 400
+        },
+        {
+          title: 'Address',
+          dataIndex: 'address',
+          key: 'address 1',
+          ellipsis: true,
+          width: 400
+        },
+        {
+          title: 'Long Column Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 2',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 3',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column',
+          dataIndex: 'address',
+          key: 'address 4',
+          ellipsis: true
+          // fixed: 'right'
+        }
+      ],
+      list: mockData(0, 2000)
     }
+  },
+  methods: {
   }
 }
 </script>
 
 <style lang='less' scoped>
+
 </style>

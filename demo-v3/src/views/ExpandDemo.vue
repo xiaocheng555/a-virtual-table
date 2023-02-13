@@ -1,106 +1,85 @@
 <template>
   <div>
-    <virtual-scroll
-      ref="virtualScroll"
-      :data="list"
-      :item-size="62"
-      key-prop="id"
-      @change="onVirtualChange">
-      <el-table
-        ref="table"
-        :data="tableData"
-        height="600"
-        row-key="id"
-        :class="isExpanding ? 'is-expanding' : ''"
-        style="width: 100%"
-        :row-class-name="rowClassName"
-        @expand-change="onExpandChange">
-        <el-table-column type="expand">
-          <template v-slot="props">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="商品名称">
-                <span>{{ props.row.name }}</span>
-              </el-form-item>
-              <el-form-item label="所属店铺">
-                <span>{{ props.row.shop }}</span>
-              </el-form-item>
-              <el-form-item label="商品 ID">
-                <span>{{ props.row.id }}</span>
-              </el-form-item>
-              <el-form-item label="店铺 ID">
-                <span>{{ props.row.shopId }}</span>
-              </el-form-item>
-              <el-form-item label="商品分类">
-                <span>{{ props.row.category }}</span>
-              </el-form-item>
-              <el-form-item label="店铺地址">
-                <span>{{ props.row.address }}</span>
-              </el-form-item>
-              <el-form-item label="商品描述">
-                <span>{{ props.row.desc }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="商品 ID"
-          prop="id">
-        </el-table-column>
-        <el-table-column
-          label="商品名称"
-          prop="name">
-        </el-table-column>
-        <el-table-column
-          label="描述"
-          prop="desc">
-        </el-table-column>
-      </el-table>
-    </virtual-scroll>
+    <el-alert type="warning">
+      不支持使用 <i>:expandedRowKeys.sync="expandedRowKeys" 方式</i>
+    </el-alert>
+    <a-virtual-table
+      :columns="columns"
+      :data-source="list"
+      :itemSize="54"
+      keyProp="id"
+      row-key="id"
+      :scroll="{ x: 1300, y: 600 }"
+      :expanded-row-keys="expandedRowKeys"
+      @expand="onTableExpand">
+      <template #expandedRowRender="{record}">
+        详细内容：{{ record.text }}
+      </template>
+    </a-virtual-table>
   </div>
 </template>
 
 <script>
-import VirtualScroll from 'el-table-virtual-scroll-next'
 import { mockData } from '@/utils'
+import AVirtualTable from '../../../src/a-virtual-table'
 
 export default {
   components: {
-    VirtualScroll
+    AVirtualTable
   },
   data () {
     return {
-      list: mockData(0, 2000),
-      tableData: [],
-      expandRows: [],
-      isExpanding: false // 手动控制展开时，阻止展开图标抖动
+      expandedRowKeys: [1, 3, 5, 7],
+      columns: [
+        {
+          title: 'id',
+          dataIndex: 'id',
+          key: 'id',
+          width: 100
+        },
+        {
+          title: 'text',
+          dataIndex: 'text',
+          key: 'text',
+          width: 400
+        },
+        {
+          title: 'Address',
+          dataIndex: 'address',
+          key: 'address 1',
+          ellipsis: true,
+          width: 400
+        },
+        {
+          title: 'Long Column Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 2',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 3',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column',
+          dataIndex: 'address',
+          key: 'address 4',
+          ellipsis: true
+        }
+      ],
+      list: mockData(0, 2000)
     }
   },
   methods: {
-    rowClassName ({row}) {
-      return `row_${row.id}`
-    },
-    async onVirtualChange (virtualList) {
-      this.tableData = virtualList
-      this.isExpanding = true
-      await this.$nextTick()
-      this.expandRows.forEach(row => {
-        this.$refs.table?.toggleRowExpansion?.(row, true)
-      })
-      setTimeout(() => {
-        this.isExpanding = false
-      }, 10)
-    },
-    onExpandChange (row) {
-      const rowEl = document.querySelector(`.row_${row.id}`)
-      if (rowEl) {
-        const isExpand = !rowEl.className.includes('expanded')
-        if (isExpand) {
-          if (!this.expandRows.includes(row)) {
-            this.expandRows.push(row)
-          }
-        } else {
-          this.expandRows = this.expandRows.filter(expandRow => expandRow !== row)
-        }
+    onTableExpand (expanded, record) {
+      if (expanded) {
+        this.expandedRowKeys.push(record.id)
+      } else {
+        this.expandedRowKeys = this.expandedRowKeys.filter(key => key !== record.id)
       }
     }
   }
@@ -108,21 +87,5 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.demo-table-expand {
-  font-size: 0;
-}
-.demo-table-expand label {
-  width: 90px;
-  color: #99a9bf;
-}
-.demo-table-expand .el-form-item {
-  margin-right: 0;
-  margin-bottom: 0;
-  width: 50%;
-}
-:deep(.is-expanding) {
-  .el-table__expand-icon {
-    transition: none;
-  }
-}
+
 </style>

@@ -1,69 +1,88 @@
 <template>
   <div>
-    带边框：<el-switch v-model="border"></el-switch> /
-    带状态表格：<el-switch v-model="status"></el-switch> /
-    带条纹：<el-switch v-model="stripe"></el-switch>
-    <virtual-scroll
-      ref="virtualScroll"
-      :data="list"
+    <a-virtual-table
+      :columns="columns"
+      :data-source="list"
+      :itemSize="54"
+      keyProp="id"
       row-key="id"
-      :item-size="62"
-      key-prop="id"
-      @change="(virtualList) => tableData = virtualList">
-      <el-table
-        :data="tableData"
-        :stripe="stripe"
-        :border="border"
-        height="500px"
-        style="width: 100%"
-        :row-class-name="tableRowClassName">
-        <el-table-column label="id" prop="id" width="180" fixed></el-table-column>
-        <el-table-column label="日期" width="260" prop="date"></el-table-column>
-        <el-table-column label="内容省略" width="800" prop="text" show-overflow-tooltip></el-table-column>
-        <el-table-column label="内容" prop="text" width="800"></el-table-column>
-      </el-table>
-    </virtual-scroll>
+      :scroll="{ x: 1300, y: 600 }">
+      <template #name="{text}">
+        <a>{{ text }}===</a>
+      </template>
+    </a-virtual-table>
   </div>
 </template>
 
 <script>
-import VirtualScroll from 'el-table-virtual-scroll-next'
 import { mockData } from '@/utils'
+import AVirtualTable from '../../../src/a-virtual-table'
 
 export default {
   components: {
-    VirtualScroll
+    AVirtualTable
   },
   data () {
     return {
-      list: mockData(0, 2000),
-      tableData: [],
-      stripe: false,
-      border: false,
-      status: false
+      columns: [
+        {
+          title: 'Name',
+          dataIndex: 'name',
+          key: 'name',
+          slots: { customRender: 'name' },
+          fixed: 'left',
+          width: 200
+        },
+        {
+          title: 'id',
+          dataIndex: 'id',
+          key: 'id',
+          width: 100
+        },
+        {
+          title: 'text',
+          dataIndex: 'text',
+          key: 'text',
+          width: 400
+        },
+        {
+          title: 'Address',
+          dataIndex: 'address',
+          key: 'address 1',
+          ellipsis: true,
+          width: 400
+        },
+        {
+          title: 'Long Column Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 2',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 3',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column',
+          dataIndex: 'address',
+          key: 'address 4',
+          ellipsis: true,
+          width: 150,
+          fixed: 'right'
+        }
+      ],
+      list: mockData(0, 2000)
     }
   },
   methods: {
-    tableRowClassName ({row}) {
-      if (!this.status) return
-
-      if (row.index === 1) {
-        return 'warning-row'
-      } else if (row.index === 3) {
-        return 'success-row'
-      }
-      return ''
-    }
   }
 }
 </script>
 
 <style lang='less' scoped>
-:deep(.el-table .warning-row) {
-  background: oldlace;
-}
 
-:deep(.el-table .success-row) {
-  background: #f0f9eb;
-}
 </style>

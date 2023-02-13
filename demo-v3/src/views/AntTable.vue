@@ -1,24 +1,29 @@
 <template>
   <div>
-    <a-virtual-table
+    <h2>红色边框的是滚动容器</h2>
+    <p>一些内容</p>
+    <p>一些内容</p>
+    <a-table
       :columns="columns"
       :data-source="list"
       :itemSize="54"
       keyProp="id"
       row-key="id"
-      :scroll="{ x: 1300, y: 600 }"
-      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio' }">
-    </a-virtual-table>
+      :pagination="false"
+      :scroll="{ x: 1300 }"
+      :row-selection="{selectedRowKeys: selectedRowKeys }">
+      <template #name="{text}">
+        <a>{{ text }}===</a>
+      </template>
+    </a-table>
   </div>
 </template>
 
 <script>
 import { mockData } from '@/utils'
-import AVirtualTable from '../../../src/a-virtual-table'
 
 export default {
   components: {
-    AVirtualTable
   },
   data () {
     return {
@@ -29,6 +34,7 @@ export default {
           dataIndex: 'name',
           key: 'name',
           slots: { customRender: 'name' },
+          // fixed: 'left',
           width: 200
         },
         {
@@ -69,17 +75,14 @@ export default {
           dataIndex: 'address',
           key: 'address 4',
           ellipsis: true,
-          width: 300
+          width: 300,
+          fixed: 'right'
         }
       ],
-      list: mockData(0, 2000)
+      list: mockData(0, 50)
     }
   },
   methods: {
-    onSelectChange (selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
-      this.selectedRowKeys = selectedRowKeys
-    }
   }
 }
 </script>

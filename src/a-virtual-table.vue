@@ -5,9 +5,9 @@
       :pagination="false"
       :columns="tableColumns"
       :data-source="renderData">
-      <!-- <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="text">
-        <slot :name="slot" v-bind="typeof text === 'object' ? text : text"></slot>
-      </template> -->
+      <template v-for="slot in Object.keys($slots)" #[slot]="text">
+        <slot :name="slot" v-bind="text"></slot>
+      </template>
     </a-table>
     <div class="ant-table-append" ref="append" v-show="!isHideAppend">
       <slot name="append"></slot>
@@ -17,6 +17,8 @@
 
 <script lang="jsx">
 import throttle from 'lodash/throttle'
+import Checkbox from 'ant-design-vue/lib/checkbox'
+import Table from 'ant-design-vue/lib/table'
 
 // 判断是否是滚动容器
 function isScroller (el) {
@@ -76,11 +78,17 @@ function scrollToY (el, y) {
 }
 
 // 表格body class名称
-const TableBodyClassNames = ['.ant-table-scroll .ant-table-body', '.ant-table-fixed-left .ant-table-body-inner', '.ant-table-fixed-right .ant-table-body-inner']
+const TableBodyClassNames = ['.ant-table-body', '.ant-table-content']
+
+let checkOrder = 0 // 多选：记录多选选项改变的顺序
 
 export default {
   inheritAttrs: false,
   name: 'a-virtual-table',
+  components: {
+    ACheckbox: Checkbox,
+    ATable: Table
+  },
   props: {
     dataSource: {
       type: Array,
@@ -107,7 +115,7 @@ export default {
     // 顶部和底部缓冲区域，值越大显示表格的行数越多
     buffer: {
       type: Number,
-      default: 100
+      default: 200
     },
     // 滚动事件的节流时间
     throttleTime: {
@@ -153,15 +161,15 @@ export default {
                 <a-checkbox
                   checked={this.isCheckedAll}
                   indeterminate={this.isCheckedImn}
-                  onchange={() => this.onCheckAllRows(!this.isCheckedAll)}>
+                  onChange={() => this.onCheckAllRows(!this.isCheckedAll)}>
                 </a-checkbox>
               )
             },
-            customRender: (text, row) => {
+            customRender: ({ text, record: row }) => {
               return (
                 <a-checkbox
                   checked={row.$v_checked}
-                  onchange={() => this.onCheckRow(row, !row.$v_checked)}>
+                  onChange={() => this.onCheckRow(row, !row.$v_checked)}>
                 </a-checkbox>
               )
             },
@@ -171,7 +179,7 @@ export default {
         } else if (column.index) {
           // 兼容索引
           return {
-            customRender: (text, row, index) => {
+            customRender: ({ text, row, index }) => {
               const curIndex = this.start + index
               return typeof column.index === 'function' ? column.index(curIndex) : curIndex + 1
             },
@@ -207,10 +215,11 @@ export default {
       this.scrollPos = [0, 0, 0, 0]
       // 组件是否deactivated状态
       this.isDeactivated = false
+      this.toTop = 0
 
       this.scroller = this.getScroller()
-      console.log(this.scroller, 'this.scroller')
       this.setToTop()
+      console.log(this.toTop, 'this.toTop')
       this.recordTablePos()
 
       // 首次需要执行2次handleScroll：因为第一次计算renderData时表格高度未确认导致计算不准确；第二次执行时，表格高度确认后，计算renderData是准确的
@@ -224,11 +233,21 @@ export default {
       window.addEventListener('resize', this.onScroll)
     },
 
+    // 设置表格到滚动容器的距离
+    setToTop () {
+      if (this.isInnerScroll) {
+        this.toTop = 0
+      } else {
+        this.toTop = this.$el.getBoundingClientRect().top - (this.scroller === window ? 0 : this.scroller.getBoundingClientRect().top) + getScrollTop(this.scroller)
+      }
+    },
+
     // 获取滚动元素
     getScroller () {
-      debugger
       let el
       if (this.scrollBox) {
+        if (this.scrollBox === 'window' || this.scrollBox === window) return window
+
         el = document.querySelector(this.scrollBox)
         if (!el) throw new Error(` scrollBox prop: '${this.scrollBox}' is not a valid selector`)
         if (!isScroller(el)) console.warn(`Warning! scrollBox prop: '${this.scrollBox}' is not a scroll element`)
@@ -268,9 +287,9 @@ export default {
       let rows = []
       if (this.isTree) {
         // 处理树形表格，筛选出一级树形结构
-        rows = this.$el.querySelectorAll('.ant-table-body .ant-table-row-level-0')
+        rows = this.$el.querySelectorAll('.ant-table-container .ant-table-row-level-0')
       } else {
-        rows = this.$el.querySelectorAll('.ant-table-body .ant-table-tbody .ant-table-row')
+        rows = this.$el.querySelectorAll('.ant-table-container .ant-table-tbody .ant-table-row')
       }
 
       Array.from(rows).forEach((row, index) => {
@@ -420,8 +439,7 @@ export default {
 
     // 【外部调用】更新
     update () {
-      // console.log('update')
-      this.toTop = this.$el.getBoundingClientRect().top - this.scroller.getBoundingClientRect().top
+      this.setToTop()
       this.handleScroll()
     },
 
@@ -469,52 +487,45 @@ export default {
     },
 
     // 执行update方法更新虚拟滚动，且每次nextTick只能执行一次【在数据大于100条开启虚拟滚动时，由于监听了data、virtualized会连续触发两次update方法：第一次update时，（updateSize）计算尺寸里的渲染数据（renderData）与表格行的dom是一一对应，之后会改变渲染数据（renderData）的值；而第二次执行update时，renderData改变了，而表格行dom未改变，导致renderData与dom不一一对应，从而位置计算错误，最终渲染的数据对应不上。因此使用每次nextTick只能执行一次来避免bug发生】
-    doUpdate () {
+    doUpdate (immediate = true) {
       if (this.hasDoUpdate) return // nextTick内已经执行过一次就不执行
       if (!this.scroller) return // scroller不存在说明未初始化完成，不执行
 
-      // 启动虚拟滚动的瞬间，需要暂时隐藏el-table__append-wrapper里的内容，不然会导致滚动位置一直到append的内容处
+      // 启动虚拟滚动的瞬间，需要暂时隐藏append里的内容，不然会导致滚动位置一直到append的内容处
       this.isHideAppend = true
-      this.update()
       this.hasDoUpdate = true
+      immediate && this.update()
+
       this.$nextTick(() => {
+        !immediate && this.update()
         this.hasDoUpdate = false
         this.isHideAppend = false
       })
     },
 
-    // 多选：兼容表格clearSelection方法
-    clearSelection () {
-      this.dataSource.forEach(row => this.$set(row, '$v_checked', false))
-      this.isCheckedAll = false
-      this.isCheckedImn = false
-      this.emitSelectionChange()
-    },
-
-    // 多选：兼容表格toggleRowSelection方法
-    toggleRowSelection (row, selected) {
-      const val = typeof selected === 'boolean' ? selected : !row.$v_checked
-      this.onCheckRow(row, val)
-    },
-
-    // 多选：兼容表格selection-change事件
-    emitSelectionChange () {
-      const selection = this.dataSource.filter(row => row.$v_checked)
-      this.$emit('selection-change', selection)
-    },
-
     // 兼容多选：选择表格所有行
     onCheckAllRows (val) {
       val = this.isCheckedImn ? true : val
-      this.dataSource.forEach(row => this.$set(row, '$v_checked', val))
+      this.dataSource.forEach(row => {
+        if (row.$v_checked === val) return
+
+        this.$set(row, '$v_checked', val)
+        this.$set(row, '$v_checkedOrder', val ? checkOrder++ : undefined)
+      })
       this.isCheckedAll = val
       this.isCheckedImn = false
       this.emitSelectionChange()
+      // 取消全选，则重置checkOrder
+      if (val === false) checkOrder = 0
     },
 
     // 兼容多选：选择表格某行
-    onCheckRow (row, value) {
-      this.$set(row, '$v_checked', value)
+    onCheckRow (row, val) {
+      if (row.$v_checked === val) return
+
+      this.$set(row, '$v_checked', val)
+      this.$set(row, '$v_checkedOrder', val ? checkOrder++ : undefined)
+
       const checkedLen = this.dataSource.filter(row => row.$v_checked === true).length
       if (checkedLen === 0) {
         this.isCheckedAll = false
@@ -527,6 +538,24 @@ export default {
         this.isCheckedImn = true
       }
       this.emitSelectionChange()
+    },
+
+    // 多选：兼容表格selection-change事件
+    emitSelectionChange () {
+      const selection = this.dataSource.filter(row => row.$v_checked).sort((a, b) => a.$v_checkedOrder - b.$v_checkedOrder)
+      this.$emit('selection-change', selection)
+    },
+
+    // 多选：兼容表格toggleRowSelection方法
+    toggleRowSelection (row, selected) {
+      const val = typeof selected === 'boolean' ? selected : !row.$v_checked
+      this.onCheckRow(row, val)
+    },
+
+    // 多选：兼容表格clearSelection方法
+    clearSelection () {
+      this.isCheckedImn = false
+      this.onCheckAllRows(false)
     },
 
     // 记录表格x、y轴滚动位置
@@ -564,7 +593,7 @@ export default {
     }
   },
   watch: {
-    dataSource () {
+    'dataSource.length' () {
       if (!this.virtualized) {
         this.renderAllData()
       } else {
@@ -577,21 +606,25 @@ export default {
         if (!val) {
           this.renderAllData()
         } else {
-          this.doUpdate()
+          this.doUpdate(false)
         }
       }
     }
   },
   created () {
+    // 兼容$set
+    this.$set = (data, key, value) => (data[key] = value)
+
     this.$nextTick(() => {
       this.initData()
     })
   },
   mounted () {
     const appendEl = this.$refs.append
-    this.$el.querySelector('.ant-table-body').appendChild(appendEl)
+    const bodyEl = this.$el.querySelector('.ant-table-body')
+    if (bodyEl) bodyEl.appendChild(appendEl)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     if (this.scroller) {
       this.scroller.removeEventListener('scroll', this.onScroll)
       window.removeEventListener('resize', this.onScroll)

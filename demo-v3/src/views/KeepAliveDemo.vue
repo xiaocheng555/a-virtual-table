@@ -1,12 +1,18 @@
 <template>
   <div>
+    <div>
+      <el-switch v-model="innerScroll"></el-switch>内部滚动
+    </div>
     <a-virtual-table
+      :key="innerScroll"
+      ref="aVirtualTable"
+      :loading="loading"
       :columns="columns"
       :data-source="list"
       :itemSize="54"
       keyProp="id"
       row-key="id"
-      :scroll="{ x: 1300, y: 600 }">
+      :scroll="{ x: 1300, y: innerScroll ? 600 : undefined}">
       <a slot="name" slot-scope="{text}">{{ text }}===</a>
     </a-virtual-table>
   </div>
@@ -14,20 +20,25 @@
 
 <script>
 import { mockData } from '@/utils'
-import AVirtualTable from '../../src/a-virtual-table'
+import AVirtualTable from 'a-virtual-table'
 
 export default {
+  name: 'KeepAliveDemo',
   components: {
     AVirtualTable
   },
   data () {
     return {
+      innerScroll: true,
+      count: 2000,
+      jumpIndex: 200,
+      loading: false,
       columns: [
         {
           title: 'Name',
           dataIndex: 'name',
           key: 'name',
-          scopedSlots: { customRender: 'name' },
+          slots: { customRender: 'name' },
           // fixed: 'left',
           width: 200
         },
@@ -73,10 +84,28 @@ export default {
           fixed: 'right'
         }
       ],
-      list: mockData(0, 2000)
+      list: []
     }
   },
   methods: {
+    fetchData () {
+      this.loading = true
+      setTimeout(() => {
+        this.list = mockData(0, this.count)
+        this.loading = false
+      }, 1000)
+    },
+    scrollToRow (index) {
+      this.$refs.aVirtualTable.scrollTo(index)
+    }
+  },
+  watch: {
+    count () {
+      this.fetchData()
+    }
+  },
+  created () {
+    this.fetchData()
   }
 }
 </script>

@@ -1,73 +1,90 @@
 <template>
   <div>
-    <virtual-scroll
-      ref="virtualScroll"
-      :data="list"
-      :item-size="62"
-      key-prop="id"
-      @change="(virtualList) => tableData = virtualList">
-      <el-table
-        :data="tableData"
-        height="500"
-        row-key="id"
-        style="width: 100%">
-        <el-table-column
-          prop="date"
-          label="日期"
-          width="150">
-        </el-table-column>
-        <el-table-column label="配送信息">
-          <el-table-column
-            prop="name"
-            label="姓名"
-            width="120">
-          </el-table-column>
-          <el-table-column label="地址">
-            <el-table-column
-              prop="province"
-              label="省份"
-              width="120">
-            </el-table-column>
-            <el-table-column
-              prop="city"
-              label="市区"
-              width="120">
-            </el-table-column>
-            <el-table-column
-              prop="address"
-              label="地址"
-              width="300">
-            </el-table-column>
-            <el-table-column
-              prop="zip"
-              label="邮编"
-              width="120">
-            </el-table-column>
-          </el-table-column>
-        </el-table-column>
-      </el-table>
-    </virtual-scroll>
+    <a-virtual-table
+      bordered
+      :columns="columns"
+      :data-source="list"
+      :itemSize="54"
+      keyProp="id"
+      row-key="id"
+      :scroll="{ x: 1300, y: 600 }">
+      <template #name="{text}">
+        <a>{{ text }}===</a>
+      </template>
+    </a-virtual-table>
   </div>
 </template>
 
 <script>
-import VirtualScroll from 'el-table-virtual-scroll-next'
 import { mockData } from '@/utils'
+import AVirtualTable from '../../../src/a-virtual-table'
 
 export default {
   components: {
-    VirtualScroll
+    AVirtualTable
   },
   data () {
     return {
-      list: mockData(0, 2000),
-      tableData: []
+      columns: [
+        {
+          title: 'Name',
+          dataIndex: 'name',
+          key: 'name',
+          slots: { customRender: 'name' },
+          // fixed: 'left',
+          width: 200
+        },
+        {
+          title: '多表头',
+          key: 'head',
+          children: [
+            {
+              title: 'id',
+              dataIndex: 'id',
+              key: 'id',
+              width: 100
+            },
+            {
+              title: 'text',
+              dataIndex: 'text',
+              key: 'text',
+              width: 400
+            }
+          ]
+        },
+        {
+          title: 'Address',
+          dataIndex: 'address',
+          key: 'address 1',
+          ellipsis: true,
+          width: 400
+        },
+        {
+          title: 'Long Column Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 2',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 3',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column',
+          dataIndex: 'address',
+          key: 'address 4',
+          ellipsis: true
+          // fixed: 'right',
+        }
+      ],
+      list: mockData(0, 2000)
     }
   },
   methods: {
-
-  },
-  created () {
   }
 }
 </script>

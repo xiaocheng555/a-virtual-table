@@ -1,81 +1,96 @@
 <template>
   <div>
-    <virtual-scroll
-      ref="virtualScroll"
-      :data="list"
-      :item-size="62"
-      key-prop="id"
-      @change="onVirtualChange"
+    <a-virtual-table
+      ref="virtualTable"
+      :columns="columns"
+      :data-source="list"
+      :itemSize="54"
+      keyProp="id"
+      row-key="id"
+      :scroll="{ x: 1300, y: 600 }"
       @selection-change="handleSelectionChange">
-      <el-table
-        :data="tableData"
-        height="500"
-        row-key="id"
-        tooltip-effect="dark"
-        style="width: 100%">
-        <!-- 多选 -->
-        <virtual-column width="60" type="selection"></virtual-column>
-        <el-table-column
-          label="日期"
-          width="150">
-          <template v-slot="scope">{{ scope.row.date }}</template>
-        </el-table-column>
-        <el-table-column
-          prop="name"
-          label="姓名"
-          width="120">
-        </el-table-column>
-        <el-table-column
-          prop="address"
-          label="地址"
-          show-overflow-tooltip>
-        </el-table-column>
-      </el-table>
-    </virtual-scroll>
+    </a-virtual-table>
     <div style="margin-top: 20px">
-      <el-button @click="toggleSelection([list[1], list[2]])">切换第二、第三行的选中状态</el-button>
-      <el-button @click="toggleSelection()">取消选择</el-button>
+      <a-button @click="toggleSelection([list[1], list[2]])">切换第二、第三行的选中状态</a-button>
+      <a-button @click="toggleSelection()">取消选择</a-button>
     </div>
   </div>
 </template>
 
 <script>
-import VirtualScroll from 'el-table-virtual-scroll-next'
-import { VirtualColumn } from 'el-table-virtual-scroll-next'
 import { mockData } from '@/utils'
+import AVirtualTable from '../../../src/a-virtual-table'
 
 export default {
   components: {
-    VirtualScroll,
-    VirtualColumn
+    AVirtualTable
   },
   data () {
     return {
+      columns: [
+        {
+          type: 'selection'
+        },
+        {
+          title: 'id',
+          dataIndex: 'id',
+          key: 'id',
+          width: 100
+        },
+        {
+          title: 'text',
+          dataIndex: 'text',
+          key: 'text',
+          width: 400
+        },
+        {
+          title: 'Address',
+          dataIndex: 'address',
+          key: 'address 1',
+          ellipsis: true,
+          width: 400
+        },
+        {
+          title: 'Long Column Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 2',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column Long Column',
+          dataIndex: 'address',
+          key: 'address 3',
+          ellipsis: true,
+          width: 300
+        },
+        {
+          title: 'Long Column',
+          dataIndex: 'address',
+          key: 'address 4',
+          ellipsis: true,
+          width: 300
+          // fixed: 'right',
+        }
+      ],
       list: mockData(0, 2000),
-      tableData: [],
       multipleSelection: []
     }
   },
   methods: {
-    onVirtualChange (virtualList) {
-      console.log('onVirtualChange')
-      this.tableData = virtualList
-    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
-          this.$refs.virtualScroll.toggleRowSelection(row)
-        });
+          this.$refs.virtualTable.toggleRowSelection(row)
+        })
       } else {
-        this.$refs.virtualScroll.clearSelection()
+        this.$refs.virtualTable.clearSelection()
       }
     },
     handleSelectionChange (val) {
       console.log('multipleSelection', val)
       this.multipleSelection = val
     }
-  },
-  created () {
   }
 }
 </script>
