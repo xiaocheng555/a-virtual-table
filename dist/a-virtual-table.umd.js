@@ -9,6 +9,33 @@
   var Checkbox__default = /*#__PURE__*/_interopDefaultLegacy(Checkbox);
   var Table__default = /*#__PURE__*/_interopDefaultLegacy(Table);
 
+  function _iterableToArrayLimit(arr, i) {
+    var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"];
+    if (null != _i) {
+      var _s,
+        _e,
+        _x,
+        _r,
+        _arr = [],
+        _n = !0,
+        _d = !1;
+      try {
+        if (_x = (_i = _i.call(arr)).next, 0 === i) {
+          if (Object(_i) !== _i) return;
+          _n = !1;
+        } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0);
+      } catch (err) {
+        _d = !0, _e = err;
+      } finally {
+        try {
+          if (!_n && null != _i.return && (_r = _i.return(), Object(_r) !== _r)) return;
+        } finally {
+          if (_d) throw _e;
+        }
+      }
+      return _arr;
+    }
+  }
   function ownKeys(object, enumerableOnly) {
     var keys = Object.keys(object);
     if (Object.getOwnPropertySymbols) {
@@ -52,6 +79,28 @@
       obj[key] = value;
     }
     return obj;
+  }
+  function _slicedToArray(arr, i) {
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+  }
+  function _arrayWithHoles(arr) {
+    if (Array.isArray(arr)) return arr;
+  }
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+    return arr2;
+  }
+  function _nonIterableRest() {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
   function _toPrimitive(input, hint) {
     if (typeof input !== "object" || input === null) return input;
@@ -673,6 +722,21 @@
     return el === window ? window.pageYOffset : el.scrollTop;
   }
 
+  // 获取容器滚动位置
+  function getScrollLeft(el) {
+    return el === window ? window.pageXOffset : el.scrollLeft;
+  }
+
+  // 设置容器滚动位置
+  function setScrollTop(el, pos) {
+    return el === window ? window.scroll(window.pageXOffset, pos) : el.scrollTop = pos;
+  }
+
+  // 设置容器滚动位置
+  function setScrollLeft(el, pos) {
+    return el === window ? window.scroll(pos, window.pageYOffset) : el.scrollLeft = pos;
+  }
+
   // 获取容器高度
   function getOffsetHeight(el) {
     return el === window ? window.innerHeight : el.offsetHeight;
@@ -838,12 +902,13 @@
         var _this2 = this;
         // 是否是表格内部滚动
         this.isInnerScroll = false;
-        // 滚动容器滚动位置
-        this.scrollTop = 0;
+        // 滚动容器滚动位置【0-滚动容器top；1-滚动容器left；2-表格滚动容器top；3-表格滚动容器left】
+        this.scrollPos = [0, 0, 0, 0];
         // 组件是否deactivated状态
         this.isDeactivated = false;
         this.scroller = this.getScroller();
         this.setToTop();
+        this.recordTablePos();
 
         // 首次需要执行2次handleScroll：因为第一次计算renderData时表格高度未确认导致计算不准确；第二次执行时，表格高度确认后，计算renderData是准确的
         this.handleScroll();
@@ -852,7 +917,9 @@
         });
         // 监听事件
         this.onScroll = throttle_1(this.handleScroll, this.throttleTime);
-        this.scroller.addEventListener('scroll', this.onScroll);
+        this.scroller.addEventListener('scroll', this.onScroll, {
+          passive: true
+        });
         window.addEventListener('resize', this.onScroll);
       },
       // 设置表格到滚动容器的距离
@@ -885,10 +952,10 @@
       handleScroll: function handleScroll() {
         // 如果组件失活，则不再执行handleScroll；否则外部容器滚动情况下记录的scrollTop会是0
         if (this.isDeactivated) return;
-        if (!this.virtualized) {
-          this.scrollTop = getScrollTop(this.scroller); // 记录scrollTop
-          return;
-        }
+        // 记录scrollPos
+        this.scrollPos[0] = getScrollTop(this.scroller);
+        this.scrollPos[1] = getScrollLeft(this.scroller);
+        if (!this.virtualized) return;
 
         // 更新当前尺寸（高度）
         this.updateSizes();
@@ -941,10 +1008,9 @@
           buffer = this.buffer,
           data = this.dataSource;
         // 计算可视范围顶部、底部
-        this.scrollTop = getScrollTop(scroller); // 记录scrollTop
-        var top = this.scrollTop - buffer - this.toTop;
+        var top = this.scrollPos[0] - buffer - this.toTop;
         var scrollerHeight = this.isInnerScroll ? this.$attrs.scroll.y : getOffsetHeight(scroller);
-        var bottom = this.scrollTop + scrollerHeight + buffer - this.toTop;
+        var bottom = this.scrollPos[0] + scrollerHeight + buffer - this.toTop;
         var start;
         var end;
         if (!this.dynamic) {
@@ -993,7 +1059,8 @@
       // 计算位置
       calcPosition: function calcPosition() {
         var _this4 = this;
-        var last = this.dataSource.length - 1;
+        var len = this.dataSource.length;
+        var last = len - 1;
         // 计算内容总高度
         var wrapHeight = this.getItemOffsetTop(last) + this.getItemSize(last);
         // 计算当前滚动位置需要撑起的高度
@@ -1008,9 +1075,6 @@
           if (!el.wrapEl) {
             var wrapEl = document.createElement('div');
             var innerEl = document.createElement('div');
-            // 此处设置display为'inline-block'，是让div宽度等于表格的宽度，修复x轴滚动时右边固定列没有阴影的bug
-            wrapEl.style.display = 'inline-block';
-            innerEl.style.display = 'inline-block';
             wrapEl.appendChild(innerEl);
             innerEl.appendChild(el.children[0]);
             el.insertBefore(wrapEl, el.firstChild);
@@ -1018,6 +1082,10 @@
             el.innerEl = innerEl;
           }
           if (el.wrapEl) {
+            // 此处设置display为'inline-block'，是让div宽度等于表格的宽度，修复x轴滚动时右边固定列没有阴影的bug
+            // 当没有数据时，需要将display设置为'block'，否则会撑开了inline-block的高度
+            el.wrapEl.style.display = len === 0 ? 'block' : 'inline-block';
+            el.innerEl.style.display = len === 0 ? 'block' : 'inline-block';
             // 设置高度
             el.wrapEl.style.height = wrapHeight + 'px';
             // 设置transform撑起高度
@@ -1163,10 +1231,43 @@
         this.isCheckedImn = false;
         this.onCheckAllRows(false);
       },
-      // 恢复y轴滚动位置
+      // 记录表格x、y轴滚动位置
+      recordTablePos: function recordTablePos() {
+        var _this9 = this;
+        if (!this.isInnerScroll) return;
+        this.tableBodyEl = this.$el.querySelector('.ant-table-body');
+        this.onTableScroll = throttle_1(function () {
+          _this9.scrollPos[2] = getScrollTop(_this9.tableBodyEl);
+          _this9.scrollPos[3] = getScrollLeft(_this9.tableBodyEl);
+        }, 100);
+        this.tableBodyEl.addEventListener('scroll', this.onTableScroll, {
+          passive: true
+        });
+      },
+      // 恢复y轴滚动位置（仅支持表格内部滚动）
       restoreScrollY: function restoreScrollY() {
         if (!this.scroller) return;
-        this.scroller.scrollTop = this.scrollTop;
+
+        // 恢复滚动容器滚动位置
+        var _this$scrollPos = _slicedToArray(this.scrollPos, 4),
+          top = _this$scrollPos[0],
+          left = _this$scrollPos[1],
+          top2 = _this$scrollPos[2],
+          left2 = _this$scrollPos[3];
+        setScrollTop(this.scroller, top);
+        setScrollLeft(this.scroller, left);
+
+        // 如果是内部滚动且固定列，则固定列也需要恢复y轴滚动位置
+        if (this.isInnerScroll) {
+          var leftScroller = document.querySelector(TableBodyClassNames[1]);
+          var rightScroller = document.querySelector(TableBodyClassNames[2]);
+          if (leftScroller) setScrollTop(leftScroller, top);
+          if (rightScroller) setScrollTop(rightScroller, top);
+        } else {
+          // 恢复表格内滚动位置
+          setScrollTop(this.tableBodyEl, top2);
+          setScrollLeft(this.tableBodyEl, left2);
+        }
       }
     },
     watch: {
@@ -1189,9 +1290,9 @@
       }
     },
     created: function created() {
-      var _this9 = this;
+      var _this10 = this;
       this.$nextTick(function () {
-        _this9.initData();
+        _this10.initData();
       });
     },
     mounted: function mounted() {
@@ -1202,6 +1303,9 @@
       if (this.scroller) {
         this.scroller.removeEventListener('scroll', this.onScroll);
         window.removeEventListener('resize', this.onScroll);
+      }
+      if (this.tableBodyEl) {
+        this.tableBodyEl.removeEventListener('scroll', this.onTableScroll);
       }
     },
     activated: function activated() {

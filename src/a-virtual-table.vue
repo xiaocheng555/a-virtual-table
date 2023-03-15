@@ -376,7 +376,8 @@ export default {
 
     // 计算位置
     calcPosition () {
-      const last = this.dataSource.length - 1
+      const len = this.dataSource.length
+      const last = len - 1
       // 计算内容总高度
       const wrapHeight = this.getItemOffsetTop(last) + this.getItemSize(last)
       // 计算当前滚动位置需要撑起的高度
@@ -391,9 +392,6 @@ export default {
         if (!el.wrapEl) {
           const wrapEl = document.createElement('div')
           const innerEl = document.createElement('div')
-          // 此处设置display为'inline-block'，是让div宽度等于表格的宽度，修复x轴滚动时右边固定列没有阴影的bug
-          wrapEl.style.display = 'inline-block'
-          innerEl.style.display = 'inline-block'
           wrapEl.appendChild(innerEl)
           innerEl.appendChild(el.children[0])
           el.insertBefore(wrapEl, el.firstChild)
@@ -402,6 +400,10 @@ export default {
         }
 
         if (el.wrapEl) {
+          // 此处设置display为'inline-block'，是让div宽度等于表格的宽度，修复x轴滚动时右边固定列没有阴影的bug
+          // 当没有数据时，需要将display设置为'block'，否则会撑开了inline-block的高度
+          el.wrapEl.style.display = len === 0 ? 'block' : 'inline-block'
+          el.innerEl.style.display = len === 0 ? 'block' : 'inline-block'
           // 设置高度
           el.wrapEl.style.height = wrapHeight + 'px'
           // 设置transform撑起高度
