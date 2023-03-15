@@ -1,5 +1,9 @@
 <template>
   <div>
+    <el-alert type="warning" style="margin-bottom: 10px;">
+        过滤、搜索组件使用 a-table-header-search、a-table-header-filter 组件，
+        <a href="https://github.com/xiaocheng555/a-virtual-table/tree/master/demo/src/views/components" target="_blank">详细请查看这里</a>
+    </el-alert>
     <a-virtual-table
       :columns="columns"
       :data-source="list"
