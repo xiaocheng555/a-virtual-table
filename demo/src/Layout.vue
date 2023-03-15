@@ -127,6 +127,11 @@ export default {
         {
           title: '索引',
           path: '/VIndex'
+        },
+        '其他',
+        {
+          title: '搜索&筛选',
+          path: '/Filter'
         }
       ]
     }

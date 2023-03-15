@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mockData } from '@/utils'
+// import { mockData } from '@/utils'
 
 export default {
   components: {
@@ -31,7 +31,7 @@ export default {
           title: 'Name',
           key: 'name',
           scopedSlots: { customRender: 'name' },
-          fixed: 'left',
+          // fixed: 'left',
           width: 200
         },
         {
@@ -76,7 +76,7 @@ export default {
           fixed: 'right',
         }
       ],
-      list: mockData(0, 50)
+      list: []// mockData(0, 50)
     }
   },
   methods: {
