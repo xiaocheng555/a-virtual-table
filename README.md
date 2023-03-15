@@ -134,7 +134,7 @@ export default {
 | selection-change | 虚拟表格多选选项发生更改时触发事件 | selectedRows |
 
 
-## el-table-virtual-scroll 组件注意事项
+## a-virtual-table 组件注意事项
 
 * 使用组件前，请确保项目中有引入 `ant-design-vue` 组件库。
 
