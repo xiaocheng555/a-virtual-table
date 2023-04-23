@@ -751,6 +751,11 @@
     }
   }
 
+  // 判断dom是否有x轴滚动条
+  function hasScrollX(el) {
+    return el.scrollWidth > el.clientWidth;
+  }
+
   // 表格body class名称
   var TableBodyClassNames = ['.ant-table-scroll .ant-table-body', '.ant-table-fixed-left .ant-table-body-inner', '.ant-table-fixed-right .ant-table-body-inner'];
   var checkOrder = 0; // 多选：记录多选选项改变的顺序
@@ -1086,6 +1091,14 @@
             // 当没有数据时，需要将display设置为'block'，否则会撑开了inline-block的高度
             el.wrapEl.style.display = len === 0 ? 'block' : 'inline-block';
             el.innerEl.style.display = len === 0 ? 'block' : 'inline-block';
+
+            // fix: 在列少情况下 网格列对不齐 #4
+            // 没有x轴滚动条时，wrapEl、innerEl容器需要100%，否则会因为inline-block布局导致所有列不会盛满而网格列对不齐
+            if (_this4.isInnerScroll && !hasScrollX(_this4.scroller)) {
+              el.wrapEl.style.width = '100%';
+              el.innerEl.style.width = '100%';
+            }
+
             // 设置高度
             el.wrapEl.style.height = wrapHeight + 'px';
             // 设置transform撑起高度
