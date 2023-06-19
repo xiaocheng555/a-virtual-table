@@ -13,6 +13,7 @@
       :scroll="{ x: 1300 }"
       :row-selection="{selectedRowKeys: selectedRowKeys }">
       <a slot="name" slot-scope="record">{{ record.name }}===</a>
+      <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
     </a-table>
   </div>
 </template>
@@ -28,8 +29,8 @@ export default {
       selectedRowKeys: [],
       columns: [
         {
-          title: 'Name',
           key: 'name',
+          slots: { title: 'customTitle' },
           scopedSlots: { customRender: 'name' },
           // fixed: 'left',
           width: 200

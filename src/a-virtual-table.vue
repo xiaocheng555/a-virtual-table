@@ -9,6 +9,10 @@
       <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="text">
         <slot :name="slot" v-bind="typeof text === 'object' ? text : {text}"></slot>
       </template>
+      <!-- 支持自定义头部 -->
+      <template v-for="slot in Object.keys($slots)" :slot="slot">
+        <slot :name="slot"></slot>
+      </template>
     </a-table>
     <div class="ant-table-append" ref="append" v-show="!isHideAppend">
       <slot name="append"></slot>

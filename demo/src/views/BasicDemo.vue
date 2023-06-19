@@ -7,7 +7,8 @@
       keyProp="id"
       row-key="id"
       :scroll="{ x: 1300, y: 600 }">
-      <a slot="name" slot-scope="{text}">{{ text }}===</a>
+      <a slot="name" slot-scope="{text}">{{ text }}</a>
+      <span slot="customTitle"><a-icon type="smile-o" /> Name (自定义头)</span>
     </a-virtual-table>
   </div>
 </template>
@@ -24,11 +25,10 @@ export default {
     return {
       columns: [
         {
-          title: 'Name',
           dataIndex: 'name',
           key: 'name',
+          slots: { title: 'customTitle' },
           scopedSlots: { customRender: 'name' },
-          // fixed: 'left',
           width: 200
         },
         {

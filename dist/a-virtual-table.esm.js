@@ -1420,7 +1420,11 @@ var __vue_render__ = function __vue_render__() {
         }
       };
     })], null, true)
-  }, "a-table", _vm.$attrs, false), _vm.$listeners)), _vm._v(" "), _c("div", {
+  }, "a-table", _vm.$attrs, false), _vm.$listeners), [_vm._v(" "), _vm._l(Object.keys(_vm.$slots), function (slot) {
+    return _c("template", {
+      slot: slot
+    }, [_vm._t(slot)], 2);
+  })], 2), _vm._v(" "), _c("div", {
     directives: [{
       name: "show",
       rawName: "v-show",
