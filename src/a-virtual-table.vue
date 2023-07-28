@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="a-virtual-table">
     <a-table
       v-bind="$attrs"
       v-on="$listeners"
@@ -162,10 +162,10 @@ export default {
   },
   computed: {
     tableColumns () {
-      return this.columns.map(column => {
+      const tableColumns = this.columns.map((column, index) => {
         // 兼容多选
         if (column.type === 'selection') {
-          return {
+          column = {
             title: () => {
               return (
                 <a-checkbox
@@ -198,6 +198,10 @@ export default {
         }
         return column
       })
+      tableColumns.forEach((column, index) => {
+        this.setCustomCellFixed(tableColumns, column, index)
+      })
+      return tableColumns
     },
     // 计算出每个item（的key值）到滚动容器顶部的距离
     offsetMap ({ keyProp, itemSize, sizes, dataSource }) {
@@ -606,6 +610,75 @@ export default {
         setScrollTop(this.tableBodyEl, top2)
         setScrollLeft(this.tableBodyEl, left2)
       }
+    },
+    // 设置自定义固定列
+    setCustomCellFixed (columns, column, index) {
+      if (!this.fixedMap) {
+        this.fixedMap = []
+        const rightIdxs = []
+        let totalLeft = 0 // 左边固定定位累加值
+        let totalRight = 0 // 右边固定定位累加值
+        let lastLeftIdx
+        let firstRightIdx
+        for (let i = 0; i < columns.length; i++) {
+          const col = columns[i]
+          const vFixed = getFixed(col)
+          if (!vFixed) continue
+          const isLeft = vFixed === 'left'
+          if (isLeft) {
+            this.fixedMap[i] = { left: totalLeft }
+            totalLeft += col.width || 0
+            lastLeftIdx = i
+          } else {
+            if (typeof firstRightIdx === 'undefined') firstRightIdx = i
+            rightIdxs.push(i)
+          }
+        }
+        // 设置右边固定列定位样式（从结尾开始算）
+        rightIdxs.reverse().forEach(idx => {
+          const col = columns[idx]
+          this.fixedMap[idx] = { right: totalRight }
+          totalRight += col.width || 0
+        })
+
+        if (typeof lastLeftIdx === 'number') this.fixedMap[lastLeftIdx].class = ' is-last-column'
+        if (typeof firstRightIdx === 'number') this.fixedMap[firstRightIdx].class = ' is-first-column'
+      }
+
+      const vfixed = getFixed(column)
+      if (!vfixed) return
+      // 原有的值
+      const _customCell = column.customCell
+      const _customHeaderCell = column.customHeaderCell
+      // 设置固定列
+      column.customCell = (...rest) => setCellFixed(false, ...rest)
+      column.customHeaderCell = (...rest) => setCellFixed(true, ...rest)
+
+      const _this = this
+      function setCellFixed (isHead, ...rest) {
+        const fn = isHead ? _customHeaderCell : _customCell
+        const res = (fn && fn(...rest)) || {}
+        const data = _this.fixedMap[index]
+        return {
+          ...res,
+          class: `virtual-column__fixed-${vfixed}` + (data.class || '') + (res.class ? ` ${res.class}` : ''),
+          style: {
+            ...res.style,
+            left: data.left + 'px',
+            right: data.right + 'px'
+          }
+        }
+      }
+      function getFixed (column) {
+        let vfixed = column.vfixed
+        if (!vfixed) return
+        if (vfixed === 'right') {
+          vfixed = 'right'
+        } else {
+          vfixed = 'left'
+        }
+        return vfixed
+      }
     }
   },
   watch: {
@@ -656,4 +729,71 @@ export default {
 </script>
 
 <style lang='less'>
+.a-virtual-table {
+  .virtual-column__fixed-left,
+  .virtual-column__fixed-right {
+    position: sticky !important;
+    z-index: 2 !important;
+  }
+  td.virtual-column__fixed-left,
+  td.virtual-column__fixed-right {
+    background: #fff;
+  }
+  .ant-table-scroll-position-left {
+    .is-last-column {
+      &:before {
+        box-shadow: none;
+      }
+    }
+  }
+  .ant-table-scroll-position-right,
+  .ant-table-scroll-position-middle {
+    .is-last-column {
+      border-right: none;
+    }
+  }
+
+  .ant-table-scroll-position-right {
+    .is-first-column {
+      &:before {
+        box-shadow: none;
+      }
+    }
+  }
+  .ant-table-scroll-position-left,
+  .ant-table-scroll-position-middle {
+    .is-first-column {
+      border-left: none;
+    }
+  }
+  .is-last-column,
+  .is-first-column {
+    overflow: visible !important;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0px;
+      width: 10px;
+      bottom: -1px;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      touch-action: none;
+      pointer-events: none;
+      transition: box-shadow 0.3s ease;
+    }
+  }
+  .is-last-column {
+    &:before {
+      right: -6px;
+      box-shadow: inset 6px 0 6px -4px rgba(0, 0, 0, .15);
+    }
+  }
+  .is-first-column {
+    &:before {
+      left: -6px;
+      box-shadow: inset -6px 0 6px -4px rgba(0, 0, 0, .15);
+    }
+  }
+}
 </style>

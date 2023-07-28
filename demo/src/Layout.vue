@@ -88,6 +88,10 @@ export default {
           path: '/ScrollerDemo'
         },
         {
+          title: '固定列（自定义）',
+          path: '/VFixed'
+        },
+        {
           title: '下拉加载',
           path: '/Loadmore'
         },
