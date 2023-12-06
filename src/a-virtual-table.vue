@@ -7,7 +7,7 @@
       :columns="tableColumns"
       :data-source="renderData">
       <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="text, record, index">
-        <slot :name="slot" v-bind="{ text, record, index }"></slot>
+        <slot :name="slot" v-bind="typeof record === 'number' ? { record: text, index: record, $index: start + record } : { text, record, index, $index: start + index }"></slot>
       </template>
       <!-- 支持自定义头部 -->
       <template v-for="slot in Object.keys($slots)" :slot="slot">

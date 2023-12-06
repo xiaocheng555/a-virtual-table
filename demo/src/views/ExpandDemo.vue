@@ -12,9 +12,12 @@
       :scroll="{ x: 1300, y: 600 }"
       :expanded-row-keys="expandedRowKeys"
       @expand="onTableExpand">
-      <template slot="expandedRowRender" slot-scope="row">
-        详细内容：{{ row.text }}
+      <template slot="expandedRowRender" slot-scope="{ record, $index  }">
+        详细内容：{{ record.text }} {{ $index }}
       </template>
+      <a slot="name" slot-scope="{text, $index}">
+       {{ text }} - {{ $index }}
+      </a>
     </a-virtual-table>
   </div>
 </template>
@@ -31,6 +34,11 @@ export default {
     return {
       expandedRowKeys: [1, 3, 5, 7],
       columns: [
+        {
+          dataIndex: 'name',
+          scopedSlots: { customRender: 'name' },
+          width: 200
+        },
         {
           title: 'id',
           dataIndex: 'id',

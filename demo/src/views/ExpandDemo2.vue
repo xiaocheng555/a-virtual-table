@@ -1,21 +1,22 @@
 <template>
   <div>
-    <h2>红色边框的是滚动容器</h2>
-    <p>一些内容</p>
-    <p>一些内容</p>
+    <el-alert type="warning">
+      不支持使用 <i>:expandedRowKeys.sync="expandedRowKeys" 方式</i>
+    </el-alert>
     <a-table
       :columns="columns"
       :data-source="list"
       :itemSize="54"
       keyProp="id"
       row-key="id"
+      :scroll="{ x: 1300, y: 600 }"
+      :expanded-row-keys="expandedRowKeys"
       :pagination="false"
-      :scroll="{ x: 1300 }"
-      :row-selection="{selectedRowKeys: selectedRowKeys }">
-      <a slot="name" slot-scope="text, record, index">
-       {{ text }} {{ index }}
-      </a>
-      <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
+      @expand="onTableExpand">
+      <a slot="name" slot-scope="text,">{{ text }}</a>
+      <p slot="expandedRowRender" slot-scope="record, text, index" style="margin: 0">
+        {{ record.text }} {{ index }} {{ text }}
+      </p>
     </a-table>
   </div>
 </template>
@@ -28,14 +29,12 @@ export default {
   },
   data () {
     return {
-      selectedRowKeys: [],
+      expandedRowKeys: [1, 3, 5, 7],
       columns: [
         {
-          key: 'name',
           dataIndex: 'name',
-          slots: { title: 'customTitle' },
+          key: 'name',
           scopedSlots: { customRender: 'name' },
-          // fixed: 'left',
           width: 200
         },
         {
@@ -75,15 +74,20 @@ export default {
           title: 'Long Column',
           dataIndex: 'address',
           key: 'address 4',
-          ellipsis: true,
-          width: 300,
-          fixed: 'right',
+          ellipsis: true
         }
       ],
-      list: mockData(0, 50)
+      list: mockData(0, 200)
     }
   },
   methods: {
+    onTableExpand (expanded, record) {
+      if (expanded) {
+        this.expandedRowKeys.push(record.id)
+      } else {
+        this.expandedRowKeys = this.expandedRowKeys.filter(key => key !== record.id)
+      }
+    }
   }
 }
 </script>
