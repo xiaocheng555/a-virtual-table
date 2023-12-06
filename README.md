@@ -144,7 +144,7 @@ export default {
 import AVirtualTable, { AVirtualTree } from 'a-virtual-table'
 ...
 
-<AVirtualTree type="index/selection/radio/expand/tree"></AVirtualTree>
+<a-virtual-tree :row="record" :load="onload">...</a-virtual-tree>
 ```
 
 ### Props
