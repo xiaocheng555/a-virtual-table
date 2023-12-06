@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>有bug未解决</h1>
+    <a-button @click="expand">全部收起</a-button>
     <a-virtual-table
       ref="virtualTable"
       isTree
@@ -10,8 +10,7 @@
       row-key="id"
       keyProp="id"
       :scroll="{ x: 1300, y: 600 }"
-      :expanded-row-keys.sync="expandedRowKeys"
-      @expand="update">
+      :expanded-row-keys.sync="expandedRowKeys">
     </a-virtual-table>
   </div>
 </template>
@@ -29,7 +28,8 @@ function mockData (start, end, level = 1) {
       id: flag++,
       text,
       text2,
-      children: level <= 2 && Math.random() > 0.5 ? mockData(flag, flag + 3, level + 1) : undefined
+      children: level <= 2 && Math.random() > 0.5 ? mockData(flag, flag + 3, level + 1) : undefined,
+      address: '广东广州'
     })
   }
   return list
@@ -104,8 +104,8 @@ export default {
     }
   },
   methods: {
-    update () {
-      this.$refs.virtualTable.update()
+    expand () {
+      this.expandedRowKeys = []
     }
   }
 }

@@ -103,14 +103,14 @@ export default {
           title: 'keep-alive',
           path: '/KeepAliveDemo'
         },
-        {
-          title: 'test2',
-          path: '/test2',
-        },
         // {
-        //   title: '树形结构（有bug未解决）',
-        //   path: '/TreeDemo'
+        //   title: 'test2',
+        //   path: '/test2',
         // },
+        {
+          title: '树形结构',
+          path: '/TreeDemo'
+        },
         // {
         //   path: '/AntTable',
         //   title: '原来a-table'

@@ -315,8 +315,8 @@ export default {
         // 表格行如果有子孙节点，需要加上子孙节点的高度
         if (this.isTree) {
           let next = row.nextSibling
-          while (next && next.tagName === 'TR' && !next.classList.contains('ant-table-row-level-0')) {
-            offsetHeight += next.offsetHeight
+          while (next && next !== rows[index + 1]) {
+            offsetHeight += next?.offsetHeight || 0
             next = next.nextSibling
           }
         }
