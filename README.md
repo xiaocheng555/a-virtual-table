@@ -121,7 +121,7 @@ export default {
 ### Methods
 | 方法名 | 说明 | 参数 |
 |---------- |-------- |---------- |
-| scrollTo | 滚动到第几行【不太精确：因为滚动到第n行时，如果周围的表格行计算出真实高度后会更新高度，导致当前行坍塌或撑起】 | index |
+| scrollTo | 滚动到第几行；index - 行数索引值；offset - 偏移位置 | (index: number, offset: number) |
 | update | 更新 | - |
 | clearSelection | 用于多选 `<virtual-column type="selection">`，清空用户的选择 | - |
 | toggleRowSelection | 用于多选 `<virtual-column type="selection">`, 切换某一行的选中状态，如果使用了第二个参数，则是设置这一行选中与否（selected 为 true 则选中） | row, selected |
@@ -134,6 +134,36 @@ export default {
 | selection-change | 虚拟表格多选选项发生更改时触发事件 | selectedRows |
 
 
+## a-virtual-tree 组件
+
+自定义树型结构，性能更好
+
+### 引入
+
+``` js
+import AVirtualTable, { AVirtualTree } from 'a-virtual-table'
+...
+
+<AVirtualTree type="index/selection/radio/expand/tree"></AVirtualTree>
+```
+
+### Props
+| 参数      | 说明          | 类型      | 可选值                           | 默认值  |
+|---------- |-------------- |---------- |--------------------------------  |-------- |
+| * | 支持 `<el-table-column>` 组件的props属性，如label, fixed, prop, width, min-width, index 等等 | - | — | - |
+| indentSize | 展示树形数据时，树节点的缩进， | Number | — | 20 |
+| load | 加载子节点数据的函数 | Function(row, resolve) | — | - |
+
+
+### Methods
+| 方法名 | 说明 | 参数 |
+|---------- |-------- |---------- |
+| expand | 展开行，其中 expandKeys 为展开行的 keys 数组；expanded 为展开或收起，默认为true；doLoad 为当展开时，是否展开新的行（调用load方法），默认为true（>=1.0.25版本支持）| Function(expandKeys, expanded, doLoad)
+| expandPath | 展开目标路径，keyPath为路径数组，如['key1', 'key2', 'key3']，该方法会展开 key1 -> key2 -> key3 对应的树节点（>=1.0.25版本支持） | keyPath: Array |
+| expandAll | 展开所有行（>=1.0.25版本支持） | - |
+| unexpandAll | 收起所有行（>=1.0.25版本支持） | - |
+
+
 ## a-virtual-table 组件注意事项
 
 * 使用组件前，请确保项目中有引入 `ant-design-vue` 组件库。
@@ -143,8 +173,6 @@ export default {
 * 不支持 `<a-table>` 原来的多选模式，需要在 column列中设置 `type="selection"`来设置多选，详见demo。
 
 * 扩展行中不支持使用 `:expandedRowKeys.sync="expandedRowKeys"` 的sync双向绑定，详见demo。
-
-* 树形结构暂无需求，有需求再兼容。
 
 * 尽量减少使用左右固定列（或只使用右固定列），滚动会更流畅
 
@@ -158,6 +186,7 @@ export default {
 * 修复指定滚动容器，偶现滚动时表头会一直在
 
 * npm 1.0.5版本发版
+
 
 2023-1-15
 
@@ -200,3 +229,8 @@ export default {
 2023-12-6
 
 * 兼容树形结构
+
+* 支持自定义树形结构
+
+* npm 1.1.0 版本发版
+

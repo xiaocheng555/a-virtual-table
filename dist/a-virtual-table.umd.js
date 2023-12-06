@@ -1,8 +1,8 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('ant-design-vue/lib/checkbox'), require('ant-design-vue/lib/table')) :
-  typeof define === 'function' && define.amd ? define(['ant-design-vue/lib/checkbox', 'ant-design-vue/lib/table'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global["a-virtual-table"] = factory(global.Checkbox, global.Table));
-})(this, (function (Checkbox, Table) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('ant-design-vue/lib/checkbox'), require('ant-design-vue/lib/table'), require('ant-design-vue')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'ant-design-vue/lib/checkbox', 'ant-design-vue/lib/table', 'ant-design-vue'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["a-virtual-table"] = {}, global.Checkbox, global.Table, global.antDesignVue));
+})(this, (function (exports, Checkbox, Table, antDesignVue) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -57,6 +57,337 @@
     }
     return target;
   }
+  function _regeneratorRuntime() {
+    _regeneratorRuntime = function () {
+      return exports;
+    };
+    var exports = {},
+      Op = Object.prototype,
+      hasOwn = Op.hasOwnProperty,
+      defineProperty = Object.defineProperty || function (obj, key, desc) {
+        obj[key] = desc.value;
+      },
+      $Symbol = "function" == typeof Symbol ? Symbol : {},
+      iteratorSymbol = $Symbol.iterator || "@@iterator",
+      asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
+      toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+    function define(obj, key, value) {
+      return Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: !0,
+        configurable: !0,
+        writable: !0
+      }), obj[key];
+    }
+    try {
+      define({}, "");
+    } catch (err) {
+      define = function (obj, key, value) {
+        return obj[key] = value;
+      };
+    }
+    function wrap(innerFn, outerFn, self, tryLocsList) {
+      var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
+        generator = Object.create(protoGenerator.prototype),
+        context = new Context(tryLocsList || []);
+      return defineProperty(generator, "_invoke", {
+        value: makeInvokeMethod(innerFn, self, context)
+      }), generator;
+    }
+    function tryCatch(fn, obj, arg) {
+      try {
+        return {
+          type: "normal",
+          arg: fn.call(obj, arg)
+        };
+      } catch (err) {
+        return {
+          type: "throw",
+          arg: err
+        };
+      }
+    }
+    exports.wrap = wrap;
+    var ContinueSentinel = {};
+    function Generator() {}
+    function GeneratorFunction() {}
+    function GeneratorFunctionPrototype() {}
+    var IteratorPrototype = {};
+    define(IteratorPrototype, iteratorSymbol, function () {
+      return this;
+    });
+    var getProto = Object.getPrototypeOf,
+      NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+    NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
+    var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
+    function defineIteratorMethods(prototype) {
+      ["next", "throw", "return"].forEach(function (method) {
+        define(prototype, method, function (arg) {
+          return this._invoke(method, arg);
+        });
+      });
+    }
+    function AsyncIterator(generator, PromiseImpl) {
+      function invoke(method, arg, resolve, reject) {
+        var record = tryCatch(generator[method], generator, arg);
+        if ("throw" !== record.type) {
+          var result = record.arg,
+            value = result.value;
+          return value && "object" == typeof value && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
+            invoke("next", value, resolve, reject);
+          }, function (err) {
+            invoke("throw", err, resolve, reject);
+          }) : PromiseImpl.resolve(value).then(function (unwrapped) {
+            result.value = unwrapped, resolve(result);
+          }, function (error) {
+            return invoke("throw", error, resolve, reject);
+          });
+        }
+        reject(record.arg);
+      }
+      var previousPromise;
+      defineProperty(this, "_invoke", {
+        value: function (method, arg) {
+          function callInvokeWithMethodAndArg() {
+            return new PromiseImpl(function (resolve, reject) {
+              invoke(method, arg, resolve, reject);
+            });
+          }
+          return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
+        }
+      });
+    }
+    function makeInvokeMethod(innerFn, self, context) {
+      var state = "suspendedStart";
+      return function (method, arg) {
+        if ("executing" === state) throw new Error("Generator is already running");
+        if ("completed" === state) {
+          if ("throw" === method) throw arg;
+          return doneResult();
+        }
+        for (context.method = method, context.arg = arg;;) {
+          var delegate = context.delegate;
+          if (delegate) {
+            var delegateResult = maybeInvokeDelegate(delegate, context);
+            if (delegateResult) {
+              if (delegateResult === ContinueSentinel) continue;
+              return delegateResult;
+            }
+          }
+          if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
+            if ("suspendedStart" === state) throw state = "completed", context.arg;
+            context.dispatchException(context.arg);
+          } else "return" === context.method && context.abrupt("return", context.arg);
+          state = "executing";
+          var record = tryCatch(innerFn, self, context);
+          if ("normal" === record.type) {
+            if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
+            return {
+              value: record.arg,
+              done: context.done
+            };
+          }
+          "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
+        }
+      };
+    }
+    function maybeInvokeDelegate(delegate, context) {
+      var methodName = context.method,
+        method = delegate.iterator[methodName];
+      if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel;
+      var record = tryCatch(method, delegate.iterator, context.arg);
+      if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
+      var info = record.arg;
+      return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
+    }
+    function pushTryEntry(locs) {
+      var entry = {
+        tryLoc: locs[0]
+      };
+      1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry);
+    }
+    function resetTryEntry(entry) {
+      var record = entry.completion || {};
+      record.type = "normal", delete record.arg, entry.completion = record;
+    }
+    function Context(tryLocsList) {
+      this.tryEntries = [{
+        tryLoc: "root"
+      }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
+    }
+    function values(iterable) {
+      if (iterable) {
+        var iteratorMethod = iterable[iteratorSymbol];
+        if (iteratorMethod) return iteratorMethod.call(iterable);
+        if ("function" == typeof iterable.next) return iterable;
+        if (!isNaN(iterable.length)) {
+          var i = -1,
+            next = function next() {
+              for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
+              return next.value = undefined, next.done = !0, next;
+            };
+          return next.next = next;
+        }
+      }
+      return {
+        next: doneResult
+      };
+    }
+    function doneResult() {
+      return {
+        value: undefined,
+        done: !0
+      };
+    }
+    return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", {
+      value: GeneratorFunctionPrototype,
+      configurable: !0
+    }), defineProperty(GeneratorFunctionPrototype, "constructor", {
+      value: GeneratorFunction,
+      configurable: !0
+    }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
+      var ctor = "function" == typeof genFun && genFun.constructor;
+      return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
+    }, exports.mark = function (genFun) {
+      return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun;
+    }, exports.awrap = function (arg) {
+      return {
+        __await: arg
+      };
+    }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
+      return this;
+    }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) {
+      void 0 === PromiseImpl && (PromiseImpl = Promise);
+      var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl);
+      return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) {
+        return result.done ? result.value : iter.next();
+      });
+    }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () {
+      return this;
+    }), define(Gp, "toString", function () {
+      return "[object Generator]";
+    }), exports.keys = function (val) {
+      var object = Object(val),
+        keys = [];
+      for (var key in object) keys.push(key);
+      return keys.reverse(), function next() {
+        for (; keys.length;) {
+          var key = keys.pop();
+          if (key in object) return next.value = key, next.done = !1, next;
+        }
+        return next.done = !0, next;
+      };
+    }, exports.values = values, Context.prototype = {
+      constructor: Context,
+      reset: function (skipTempReset) {
+        if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined);
+      },
+      stop: function () {
+        this.done = !0;
+        var rootRecord = this.tryEntries[0].completion;
+        if ("throw" === rootRecord.type) throw rootRecord.arg;
+        return this.rval;
+      },
+      dispatchException: function (exception) {
+        if (this.done) throw exception;
+        var context = this;
+        function handle(loc, caught) {
+          return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
+        }
+        for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+          var entry = this.tryEntries[i],
+            record = entry.completion;
+          if ("root" === entry.tryLoc) return handle("end");
+          if (entry.tryLoc <= this.prev) {
+            var hasCatch = hasOwn.call(entry, "catchLoc"),
+              hasFinally = hasOwn.call(entry, "finallyLoc");
+            if (hasCatch && hasFinally) {
+              if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
+              if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
+            } else if (hasCatch) {
+              if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
+            } else {
+              if (!hasFinally) throw new Error("try statement without catch or finally");
+              if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
+            }
+          }
+        }
+      },
+      abrupt: function (type, arg) {
+        for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+          var entry = this.tryEntries[i];
+          if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
+            var finallyEntry = entry;
+            break;
+          }
+        }
+        finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
+        var record = finallyEntry ? finallyEntry.completion : {};
+        return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
+      },
+      complete: function (record, afterLoc) {
+        if ("throw" === record.type) throw record.arg;
+        return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel;
+      },
+      finish: function (finallyLoc) {
+        for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+          var entry = this.tryEntries[i];
+          if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel;
+        }
+      },
+      catch: function (tryLoc) {
+        for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+          var entry = this.tryEntries[i];
+          if (entry.tryLoc === tryLoc) {
+            var record = entry.completion;
+            if ("throw" === record.type) {
+              var thrown = record.arg;
+              resetTryEntry(entry);
+            }
+            return thrown;
+          }
+        }
+        throw new Error("illegal catch attempt");
+      },
+      delegateYield: function (iterable, resultName, nextLoc) {
+        return this.delegate = {
+          iterator: values(iterable),
+          resultName: resultName,
+          nextLoc: nextLoc
+        }, "next" === this.method && (this.arg = undefined), ContinueSentinel;
+      }
+    }, exports;
+  }
+  function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+    try {
+      var info = gen[key](arg);
+      var value = info.value;
+    } catch (error) {
+      reject(error);
+      return;
+    }
+    if (info.done) {
+      resolve(value);
+    } else {
+      Promise.resolve(value).then(_next, _throw);
+    }
+  }
+  function _asyncToGenerator(fn) {
+    return function () {
+      var self = this,
+        args = arguments;
+      return new Promise(function (resolve, reject) {
+        var gen = fn.apply(self, args);
+        function _next(value) {
+          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+        }
+        function _throw(err) {
+          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+        }
+        _next(undefined);
+      });
+    };
+  }
   function _defineProperty(obj, key, value) {
     key = _toPropertyKey(key);
     if (key in obj) {
@@ -74,8 +405,17 @@
   function _slicedToArray(arr, i) {
     return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
   }
+  function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+  }
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+  }
   function _arrayWithHoles(arr) {
     if (Array.isArray(arr)) return arr;
+  }
+  function _iterableToArray(iter) {
+    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
   }
   function _unsupportedIterableToArray(o, minLen) {
     if (!o) return;
@@ -89,6 +429,9 @@
     if (len == null || len > arr.length) len = arr.length;
     for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
     return arr2;
+  }
+  function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
   function _nonIterableRest() {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
@@ -751,7 +1094,7 @@
   var TableBodyClassNames = ['.ant-table-scroll .ant-table-body', '.ant-table-fixed-left .ant-table-body-inner', '.ant-table-fixed-right .ant-table-body-inner'];
   var checkOrder = 0; // 多选：记录多选选项改变的顺序
 
-  var script = {
+  var script$1 = {
     inheritAttrs: false,
     name: 'a-virtual-table',
     components: {
@@ -811,6 +1154,11 @@
         "default": false
       }
     },
+    provide: function provide() {
+      return {
+        virtualTable: this
+      };
+    },
     data: function data() {
       return {
         start: 0,
@@ -828,21 +1176,21 @@
     },
     computed: {
       tableColumns: function tableColumns() {
-        var _this2 = this;
+        var _this = this;
         var h = this.$createElement;
-        var tableColumns = this.columns.map(function (column, index) {
+        return this.columns.map(function (column) {
           // 兼容多选
           if (column.type === 'selection') {
-            column = _objectSpread2({
+            return _objectSpread2({
               title: function title() {
                 return h("a-checkbox", {
                   "attrs": {
-                    "checked": _this2.isCheckedAll,
-                    "indeterminate": _this2.isCheckedImn
+                    "checked": _this.isCheckedAll,
+                    "indeterminate": _this.isCheckedImn
                   },
                   "on": {
                     "change": function change() {
-                      return _this2.onCheckAllRows(!_this2.isCheckedAll);
+                      return _this.onCheckAllRows(!_this.isCheckedAll);
                     }
                   }
                 });
@@ -854,7 +1202,7 @@
                   },
                   "on": {
                     "change": function change() {
-                      return _this2.onCheckRow(row, !row.$v_checked);
+                      return _this.onCheckRow(row, !row.$v_checked);
                     }
                   }
                 });
@@ -865,17 +1213,13 @@
             // 兼容索引
             return _objectSpread2({
               customRender: function customRender(text, row, index) {
-                var curIndex = _this2.start + index;
+                var curIndex = _this.start + index;
                 return typeof column.index === 'function' ? column.index(curIndex) : curIndex + 1;
               }
             }, column);
           }
           return column;
         });
-        tableColumns.forEach(function (column, index) {
-          _this2.setCustomCellFixed(tableColumns, column, index);
-        });
-        return tableColumns;
       },
       // 计算出每个item（的key值）到滚动容器顶部的距离
       offsetMap: function offsetMap(_ref) {
@@ -899,7 +1243,7 @@
     methods: {
       // 初始化数据
       initData: function initData() {
-        var _this3 = this;
+        var _this2 = this;
         // 是否是表格内部滚动
         this.isInnerScroll = false;
         // 滚动容器滚动位置【0-滚动容器top；1-滚动容器left；2-表格滚动容器top；3-表格滚动容器left】
@@ -913,7 +1257,7 @@
         // 首次需要执行2次handleScroll：因为第一次计算renderData时表格高度未确认导致计算不准确；第二次执行时，表格高度确认后，计算renderData是准确的
         this.handleScroll();
         this.$nextTick(function () {
-          _this3.handleScroll();
+          _this2.handleScroll();
         });
         // 监听事件
         this.onScroll = throttle_1(this.handleScroll, this.throttleTime);
@@ -966,7 +1310,7 @@
       },
       // 更新尺寸（高度）
       updateSizes: function updateSizes() {
-        var _this4 = this;
+        var _this3 = this;
         if (!this.dynamic) return;
         var rows = [];
         if (this.isTree) {
@@ -976,7 +1320,7 @@
           rows = this.$el.querySelectorAll('.ant-table-body .ant-table-tbody .ant-table-row');
         }
         Array.from(rows).forEach(function (row, index) {
-          var item = _this4.renderData[index];
+          var item = _this3.renderData[index];
           if (!item) return;
 
           // 计算表格行的高度
@@ -988,16 +1332,17 @@
           }
 
           // 表格行如果有子孙节点，需要加上子孙节点的高度
-          if (_this4.isTree) {
+          if (_this3.isTree) {
             var next = row.nextSibling;
-            while (next && next.tagName === 'TR' && !next.classList.contains('ant-table-row-level-0')) {
-              offsetHeight += next.offsetHeight;
+            while (next && next !== rows[index + 1]) {
+              var _next;
+              offsetHeight += ((_next = next) === null || _next === void 0 ? void 0 : _next.offsetHeight) || 0;
               next = next.nextSibling;
             }
           }
-          var key = item[_this4.keyProp];
-          if (_this4.sizes[key] !== offsetHeight) {
-            _this4.$set(_this4.sizes, key, offsetHeight);
+          var key = item[_this3.keyProp];
+          if (_this3.sizes[key] !== offsetHeight) {
+            _this3.$set(_this3.sizes, key, offsetHeight);
             row._offsetHeight = offsetHeight;
           }
         });
@@ -1058,7 +1403,7 @@
       },
       // 计算位置
       calcPosition: function calcPosition() {
-        var _this5 = this;
+        var _this4 = this;
         var len = this.dataSource.length;
         var last = len - 1;
         // 计算内容总高度
@@ -1068,7 +1413,7 @@
 
         // 设置dom位置
         TableBodyClassNames.forEach(function (className) {
-          var el = _this5.$el.querySelector(className);
+          var el = _this4.$el.querySelector(className);
           if (!el) return;
 
           // 创建wrapEl、innerEl
@@ -1089,7 +1434,7 @@
 
             // fix: 在列少情况下 网格列对不齐 #4
             // 没有x轴滚动条时，wrapEl、innerEl容器需要100%，否则会因为inline-block布局导致所有列不会盛满而网格列对不齐
-            if (_this5.isInnerScroll && !hasScrollX(_this5.scroller)) {
+            if (_this4.isInnerScroll && !hasScrollX(_this4.scroller)) {
               el.wrapEl.style.width = '100%';
               el.innerEl.style.width = '100%';
             }
@@ -1132,20 +1477,21 @@
       // 【外部调用】滚动到第几行
       // （不太精确：滚动到第n行时，如果周围的表格行计算出真实高度后会更新高度，导致内容坍塌或撑起）
       scrollTo: function scrollTo(index) {
-        var _this6 = this;
-        var stop = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+        var _this5 = this;
+        var offsetY = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+        var stop = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
         var item = this.dataSource[index];
         if (item && this.scroller) {
           this.updateSizes();
           this.calcRenderData();
           this.$nextTick(function () {
-            var offsetTop = _this6.getItemOffsetTop(index);
-            scrollToY(_this6.scroller, offsetTop);
+            var offsetTop = _this5.getItemOffsetTop(index) - offsetY;
+            scrollToY(_this5.scroller, offsetTop);
 
             // 调用两次scrollTo，第一次滚动时，如果表格行初次渲染高度发生变化时，会导致滚动位置有偏差，此时需要第二次执行滚动，确保滚动位置无误
             if (!stop) {
               setTimeout(function () {
-                _this6.scrollTo(index, true);
+                _this5.scrollTo(index, offsetY, true);
               }, 50);
             }
           });
@@ -1153,13 +1499,13 @@
       },
       // 渲染全部数据
       renderAllData: function renderAllData() {
-        var _this7 = this;
+        var _this6 = this;
         this.renderData = this.dataSource;
         this.$emit('change', this.dataSource, 0, this.dataSource.length - 1);
         this.$nextTick(function () {
           // 清除撑起的高度和位置
           TableBodyClassNames.forEach(function (className) {
-            var el = _this7.$el.querySelector(className);
+            var el = _this6.$el.querySelector(className);
             if (!el) return;
             if (el.wrapEl) {
               // 设置高度
@@ -1172,7 +1518,7 @@
       },
       // 执行update方法更新虚拟滚动，且每次nextTick只能执行一次【在数据大于100条开启虚拟滚动时，由于监听了data、virtualized会连续触发两次update方法：第一次update时，（updateSize）计算尺寸里的渲染数据（renderData）与表格行的dom是一一对应，之后会改变渲染数据（renderData）的值；而第二次执行update时，renderData改变了，而表格行dom未改变，导致renderData与dom不一一对应，从而位置计算错误，最终渲染的数据对应不上。因此使用每次nextTick只能执行一次来避免bug发生】
       doUpdate: function doUpdate() {
-        var _this8 = this;
+        var _this7 = this;
         if (this.hasDoUpdate) return; // nextTick内已经执行过一次就不执行
         if (!this.scroller) return; // scroller不存在说明未初始化完成，不执行
 
@@ -1181,18 +1527,18 @@
         this.update();
         this.hasDoUpdate = true;
         this.$nextTick(function () {
-          _this8.hasDoUpdate = false;
-          _this8.isHideAppend = false;
+          _this7.hasDoUpdate = false;
+          _this7.isHideAppend = false;
         });
       },
       // 兼容多选：选择表格所有行
       onCheckAllRows: function onCheckAllRows(val) {
-        var _this9 = this;
+        var _this8 = this;
         val = this.isCheckedImn ? true : val;
         this.dataSource.forEach(function (row) {
           if (row.$v_checked === val) return;
-          _this9.$set(row, '$v_checked', val);
-          _this9.$set(row, '$v_checkedOrder', val ? checkOrder++ : undefined);
+          _this8.$set(row, '$v_checked', val);
+          _this8.$set(row, '$v_checkedOrder', val ? checkOrder++ : undefined);
         });
         this.isCheckedAll = val;
         this.isCheckedImn = false;
@@ -1241,12 +1587,12 @@
       },
       // 记录表格x、y轴滚动位置
       recordTablePos: function recordTablePos() {
-        var _this10 = this;
+        var _this9 = this;
         if (!this.isInnerScroll) return;
         this.tableBodyEl = this.$el.querySelector('.ant-table-body');
         this.onTableScroll = throttle_1(function () {
-          _this10.scrollPos[2] = getScrollTop(_this10.tableBodyEl);
-          _this10.scrollPos[3] = getScrollLeft(_this10.tableBodyEl);
+          _this9.scrollPos[2] = getScrollTop(_this9.tableBodyEl);
+          _this9.scrollPos[3] = getScrollLeft(_this9.tableBodyEl);
         }, 100);
         this.tableBodyEl.addEventListener('scroll', this.onTableScroll, {
           passive: true
@@ -1277,87 +1623,16 @@
           setScrollLeft(this.tableBodyEl, left2);
         }
       },
-      // 设置自定义固定列
-      setCustomCellFixed: function setCustomCellFixed(columns, column, index) {
-        var _this11 = this;
-        if (!this.fixedMap) {
-          this.fixedMap = [];
-          var rightIdxs = [];
-          var totalLeft = 0; // 左边固定定位累加值
-          var totalRight = 0; // 右边固定定位累加值
-          var lastLeftIdx;
-          var firstRightIdx;
-          for (var i = 0; i < columns.length; i++) {
-            var col = columns[i];
-            var vFixed = getFixed(col);
-            if (!vFixed) continue;
-            var isLeft = vFixed === 'left';
-            if (isLeft) {
-              this.fixedMap[i] = {
-                left: totalLeft
-              };
-              totalLeft += col.width || 0;
-              lastLeftIdx = i;
-            } else {
-              if (typeof firstRightIdx === 'undefined') firstRightIdx = i;
-              rightIdxs.push(i);
-            }
-          }
-          // 设置右边固定列定位样式（从结尾开始算）
-          rightIdxs.reverse().forEach(function (idx) {
-            var col = columns[idx];
-            _this11.fixedMap[idx] = {
-              right: totalRight
-            };
-            totalRight += col.width || 0;
-          });
-          if (typeof lastLeftIdx === 'number') this.fixedMap[lastLeftIdx]["class"] = ' is-last-column';
-          if (typeof firstRightIdx === 'number') this.fixedMap[firstRightIdx]["class"] = ' is-first-column';
-        }
-        var vfixed = getFixed(column);
-        if (!vfixed) return;
-        // 原有的值
-        var _customCell = column.customCell;
-        var _customHeaderCell = column.customHeaderCell;
-        // 设置固定列
-        column.customCell = function () {
-          for (var _len = arguments.length, rest = new Array(_len), _key = 0; _key < _len; _key++) {
-            rest[_key] = arguments[_key];
-          }
-          return setCellFixed.apply(void 0, [false].concat(rest));
-        };
-        column.customHeaderCell = function () {
-          for (var _len2 = arguments.length, rest = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-            rest[_key2] = arguments[_key2];
-          }
-          return setCellFixed.apply(void 0, [true].concat(rest));
-        };
-        var _this = this;
-        function setCellFixed(isHead) {
-          var fn = isHead ? _customHeaderCell : _customCell;
-          for (var _len3 = arguments.length, rest = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-            rest[_key3 - 1] = arguments[_key3];
-          }
-          var res = fn && fn.apply(void 0, rest) || {};
-          var data = _this.fixedMap[index];
-          return _objectSpread2(_objectSpread2({}, res), {}, {
-            "class": "virtual-column__fixed-".concat(vfixed) + (data["class"] || '') + (res["class"] ? " ".concat(res["class"]) : ''),
-            style: _objectSpread2(_objectSpread2({}, res.style), {}, {
-              left: data.left + 'px',
-              right: data.right + 'px'
-            })
-          });
-        }
-        function getFixed(column) {
-          var vfixed = column.vfixed;
-          if (!vfixed) return;
-          if (vfixed === 'right') {
-            vfixed = 'right';
-          } else {
-            vfixed = 'left';
-          }
-          return vfixed;
-        }
+      // 【VirtualTree调用】更新数据
+      updateData: function updateData() {
+        var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+        // 先存在list，通过$emit update更新data不是立即执行的（那么拿到的data就是最新），所以先存到list里，拿的就是最新数据
+        this.list = data;
+        this.$emit('update:dataSource', this.list);
+      },
+      // 【VirtualTree调用】获取列表全部数据】
+      getData: function getData() {
+        return this.list || this.dataSource;
       }
     },
     watch: {
@@ -1380,9 +1655,9 @@
       }
     },
     created: function created() {
-      var _this12 = this;
+      var _this10 = this;
       this.$nextTick(function () {
-        _this12.initData();
+        _this10.initData();
       });
     },
     mounted: function mounted() {
@@ -1482,6 +1757,337 @@
       return script;
   }
 
+  /* script */
+  var __vue_script__$1 = script$1;
+
+  /* template */
+  var __vue_render__$1 = function __vue_render__() {
+    var _vm = this;
+    var _h = _vm.$createElement;
+    var _c = _vm._self._c || _h;
+    return _c("div", [_c("a-table", _vm._g(_vm._b({
+      attrs: {
+        pagination: false,
+        columns: _vm.tableColumns,
+        "data-source": _vm.renderData
+      },
+      scopedSlots: _vm._u([_vm._l(Object.keys(_vm.$scopedSlots), function (slot) {
+        return {
+          key: slot,
+          fn: function fn(text, record, index) {
+            return [_vm._t(slot, null, null, typeof record === "number" ? {
+              record: text,
+              index: record,
+              $index: _vm.start + record
+            } : {
+              text: text,
+              record: record,
+              index: index,
+              $index: _vm.start + index
+            })];
+          }
+        };
+      })], null, true)
+    }, "a-table", _vm.$attrs, false), _vm.$listeners), [_vm._v(" "), _vm._l(Object.keys(_vm.$slots), function (slot) {
+      return _c("template", {
+        slot: slot
+      }, [_vm._t(slot)], 2);
+    })], 2), _vm._v(" "), _c("div", {
+      directives: [{
+        name: "show",
+        rawName: "v-show",
+        value: !_vm.isHideAppend,
+        expression: "!isHideAppend"
+      }],
+      ref: "append",
+      staticClass: "ant-table-append"
+    }, [_vm._t("append")], 2)], 1);
+  };
+  var __vue_staticRenderFns__$1 = [];
+  __vue_render__$1._withStripped = true;
+
+  /* style */
+  var __vue_inject_styles__$1 = undefined;
+  /* scoped */
+  var __vue_scope_id__$1 = undefined;
+  /* module identifier */
+  var __vue_module_identifier__$1 = undefined;
+  /* functional template */
+  var __vue_is_functional_template__$1 = false;
+  /* style inject */
+
+  /* style inject SSR */
+
+  /* style inject shadow dom */
+
+  var __vue_component__$1 = /*#__PURE__*/normalizeComponent({
+    render: __vue_render__$1,
+    staticRenderFns: __vue_staticRenderFns__$1
+  }, __vue_inject_styles__$1, __vue_script__$1, __vue_scope_id__$1, __vue_is_functional_template__$1, __vue_module_identifier__$1, false, undefined, undefined, undefined);
+
+  var script = {
+    name: 'a-virtual-tree',
+    components: {
+      Icon: antDesignVue.Icon
+    },
+    props: {
+      // 树形缩进
+      indentSize: {
+        type: Number,
+        "default": 20
+      },
+      // 行数据
+      row: {
+        type: Object,
+        required: true
+      },
+      // 加载子节点数据
+      load: {
+        type: Function,
+        required: true
+      },
+      // 检测是否有子节点
+      check: {
+        type: Function,
+        "default": function _default(row) {
+          return row.$v_hasChildren !== false;
+        }
+      }
+    },
+    inject: ['virtualTable'],
+    methods: {
+      // 展开收起事件
+      onTreeNodeExpand: function onTreeNodeExpand(row) {
+        var _arguments = arguments,
+          _this = this;
+        return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+          var expanded, doLoad;
+          return _regeneratorRuntime().wrap(function _callee$(_context) {
+            while (1) switch (_context.prev = _context.next) {
+              case 0:
+                expanded = _arguments.length > 1 && _arguments[1] !== undefined ? _arguments[1] : !_this.row.$v_expanded;
+                doLoad = _arguments.length > 2 && _arguments[2] !== undefined ? _arguments[2] : true;
+                if (!(row.$v_expanded === expanded)) {
+                  _context.next = 4;
+                  break;
+                }
+                return _context.abrupt("return", []);
+              case 4:
+                if (!expanded) {
+                  _context.next = 13;
+                  break;
+                }
+                if (!row.$v_loaded) {
+                  _context.next = 9;
+                  break;
+                }
+                return _context.abrupt("return", _this.loadOldChildNodes(row));
+              case 9:
+                if (!doLoad) {
+                  _context.next = 11;
+                  break;
+                }
+                return _context.abrupt("return", _this.loadChildNodes(row));
+              case 11:
+                _context.next = 14;
+                break;
+              case 13:
+                return _context.abrupt("return", _this.hideChildNodes(row));
+              case 14:
+              case "end":
+                return _context.stop();
+            }
+          }, _callee);
+        }))();
+      },
+      // 加载子节点
+      loadChildNodes: function loadChildNodes(row) {
+        var _this2 = this;
+        return new Promise(function (resolve, reject) {
+          // 获取子节点数据并显示
+          _this2.$set(row, '$v_loading', true);
+          _this2.load && _this2.load(row, resolveFn.bind(_this2));
+          function resolveFn(data) {
+            if (!Array.isArray(data)) {
+              this.$set(row, '$v_loading', false);
+              resolve();
+              return;
+            }
+            this.$set(row, '$v_loading', false);
+            this.$set(row, '$v_expanded', true);
+            this.$set(row, '$v_loaded', true);
+            this.$set(row, '$v_hasChildren', !!data.length);
+            data.forEach(function (item) {
+              item.$v_level = typeof row.$v_level === 'number' ? row.$v_level + 1 : 2;
+            });
+            // 所有子节点插入到当前同级节点下
+            var list = this.virtualTable.getData();
+            var index = list.findIndex(function (item) {
+              return item === row;
+            });
+            if (index > -1) {
+              this.virtualTable.updateData([].concat(_toConsumableArray(list.slice(0, index + 1)), _toConsumableArray(data), _toConsumableArray(list.slice(index + 1))));
+            }
+            resolve(data);
+          }
+        });
+      },
+      // 加载已经加载的子节点
+      loadOldChildNodes: function loadOldChildNodes(row) {
+        this.$set(row, '$v_expanded', true);
+        var list = this.virtualTable.getData();
+        var index = list.findIndex(function (item) {
+          return item === row;
+        });
+        if (index > -1) {
+          this.virtualTable.updateData([].concat(_toConsumableArray(list.slice(0, index + 1)), _toConsumableArray(row.$v_hideNodes || []), _toConsumableArray(list.slice(index + 1))));
+          return row.$v_hideNodes;
+        }
+        return [];
+      },
+      // 隐藏子节点
+      hideChildNodes: function hideChildNodes(row) {
+        var list = this.virtualTable.getData();
+        var index = list.findIndex(function (item) {
+          return item === row;
+        });
+        if (index === -1) return;
+
+        // 查找当前节点的所有子孙节点
+        var hideNodes = [];
+        for (var i = index + 1; i < list.length; i++) {
+          var curRow = list[i];
+          if ((curRow.$v_level || 1) <= (row.$v_level || 1)) break;
+          hideNodes.push(curRow);
+        }
+        this.$set(row, '$v_hideNodes', hideNodes);
+        this.$set(row, '$v_expanded', false);
+        // 隐藏所有子孙节点
+        var newList = list.filter(function (item) {
+          return !hideNodes.includes(item);
+        });
+        this.virtualTable.updateData(newList);
+        this.virtualTable.update();
+        return [];
+      },
+      // 展开节点
+      // expandKeys - 展开节点的keys值
+      // expanded - 展开/收起
+      // doLoad - 未加载子节点则执行load函数去加载，已加载则展开
+      expand: function expand(expandKeys) {
+        var _this3 = this;
+        var expanded = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+        var doLoad = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+        if (!Array.isArray(expandKeys)) return;
+        var _this$virtualTable = this.virtualTable,
+          getData = _this$virtualTable.getData,
+          keyProp = _this$virtualTable.keyProp;
+        var data = getData();
+        var plist = [];
+        data.forEach(function (row) {
+          if (row[keyProp] && expandKeys.includes(row[keyProp])) {
+            plist.push(_this3.onTreeNodeExpand(row, expanded, doLoad));
+          }
+        });
+        return Promise.all(plist);
+      },
+      // 展开路径
+      expandPath: function expandPath(keyPath) {
+        var _this4 = this;
+        if (!Array.isArray(keyPath)) return;
+
+        // 递归路径，逐层展开节点
+        var expand = /*#__PURE__*/function () {
+          var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(rows, n) {
+            var targetRow;
+            return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+              while (1) switch (_context2.prev = _context2.next) {
+                case 0:
+                  if (!(n === keyPath.length)) {
+                    _context2.next = 2;
+                    break;
+                  }
+                  return _context2.abrupt("return", keyPath[n - 1]);
+                case 2:
+                  if (!(!Array.isArray(rows) || !rows.length)) {
+                    _context2.next = 4;
+                    break;
+                  }
+                  return _context2.abrupt("return", keyPath[n - 1]);
+                case 4:
+                  targetRow = rows.find(function (row) {
+                    return row[keyProp] === keyPath[n];
+                  });
+                  if (!targetRow) {
+                    _context2.next = 13;
+                    break;
+                  }
+                  if (targetRow.$v_expanded) {
+                    _context2.next = 10;
+                    break;
+                  }
+                  _context2.next = 9;
+                  return _this4.onTreeNodeExpand(targetRow, true);
+                case 9:
+                  rows = _context2.sent;
+                case 10:
+                  return _context2.abrupt("return", expand(rows, n + 1));
+                case 13:
+                  console.warn("[expandPath] \u6CA1\u6709\u627E\u5230 ".concat(keyPath[n], " key\u503C\u5BF9\u5E94\u7684\u884C"));
+                  return _context2.abrupt("return", keyPath[n - 1]);
+                case 15:
+                case "end":
+                  return _context2.stop();
+              }
+            }, _callee2);
+          }));
+          return function expand(_x, _x2) {
+            return _ref.apply(this, arguments);
+          };
+        }();
+        var _this$virtualTable2 = this.virtualTable,
+          getData = _this$virtualTable2.getData,
+          keyProp = _this$virtualTable2.keyProp;
+        var data = getData();
+        return expand(data, 0);
+      },
+      // 展开所有存在的节点
+      expandAll: function expandAll() {
+        var _this5 = this;
+        // 展开节点（递归）
+        var expandRows = function expandRows(data) {
+          if (Array.isArray(data) && data.length) {
+            data.forEach(function (row) {
+              _this5.onTreeNodeExpand(row, true, false);
+              expandRows(row.$v_hideNodes);
+            });
+          }
+        };
+        var getData = this.virtualTable.getData;
+        var data = getData();
+        expandRows(data);
+      },
+      // 收起所有节点
+      unexpandAll: function unexpandAll() {
+        var _this6 = this;
+        var getData = this.virtualTable.getData;
+        var data = getData();
+        var levelMap = [];
+        data.forEach(function (row) {
+          var level = row.$v_level || 1;
+          !levelMap[level] && (levelMap[level] = []);
+          levelMap[level].push(row);
+        });
+        for (var i = levelMap.length - 1; i >= 0; i--) {
+          if (!levelMap[i]) continue;
+          levelMap[i].forEach(function (row) {
+            _this6.onTreeNodeExpand(row, false);
+          });
+        }
+      }
+    }
+  };
+
   const isOldIE = typeof navigator !== 'undefined' &&
       /msie [6-9]\\b/.test(navigator.userAgent.toLowerCase());
   function createInjector(context) {
@@ -1543,40 +2149,31 @@
     var _vm = this;
     var _h = _vm.$createElement;
     var _c = _vm._self._c || _h;
-    return _c("div", {
-      staticClass: "a-virtual-table"
-    }, [_c("a-table", _vm._g(_vm._b({
-      attrs: {
-        pagination: false,
-        columns: _vm.tableColumns,
-        "data-source": _vm.renderData
-      },
-      scopedSlots: _vm._u([_vm._l(Object.keys(_vm.$scopedSlots), function (slot) {
-        return {
-          key: slot,
-          fn: function fn(text, record, index) {
-            return [_vm._t(slot, null, null, {
-              text: text,
-              record: record,
-              index: index
-            })];
-          }
-        };
-      })], null, true)
-    }, "a-table", _vm.$attrs, false), _vm.$listeners), [_vm._v(" "), _vm._l(Object.keys(_vm.$slots), function (slot) {
-      return _c("template", {
-        slot: slot
-      }, [_vm._t(slot)], 2);
-    })], 2), _vm._v(" "), _c("div", {
-      directives: [{
-        name: "show",
-        rawName: "v-show",
-        value: !_vm.isHideAppend,
-        expression: "!isHideAppend"
-      }],
-      ref: "append",
-      staticClass: "ant-table-append"
-    }, [_vm._t("append")], 2)], 1);
+    return _c("span", [_c("span", {
+      staticClass: "ant-table-row-indent",
+      style: {
+        paddingLeft: (_vm.row.$v_level - 1) * _vm.indentSize + "px"
+      }
+    }), _vm._v(" "), _vm.row.$v_loading ? _vm._t("loading", function () {
+      return [_c("a-icon", {
+        key: "loading",
+        staticClass: "ant-table-row-expand-icon ant-table-row-loading-icon",
+        attrs: {
+          type: "loading"
+        }
+      })];
+    }) : _vm.check(_vm.row) ? _c("span", {
+      staticClass: "ant-table-row-expand-icon",
+      "class": _vm.row.$v_expanded ? "ant-table-row-expanded" : "ant-table-row-collapsed",
+      on: {
+        click: function click($event) {
+          return _vm.onTreeNodeExpand(_vm.row);
+        }
+      }
+    }) : _c("span", {
+      key: "spaced",
+      staticClass: "ant-table-row-expand-icon ant-table-row-spaced"
+    }), _vm._v(" "), _vm._t("default")], 2);
   };
   var __vue_staticRenderFns__ = [];
   __vue_render__._withStripped = true;
@@ -1584,15 +2181,15 @@
   /* style */
   var __vue_inject_styles__ = function __vue_inject_styles__(inject) {
     if (!inject) return;
-    inject("data-v-0add1fd9_0", {
-      source: ".a-virtual-table .virtual-column__fixed-left,\n.a-virtual-table .virtual-column__fixed-right {\n  position: sticky !important;\n  z-index: 2 !important;\n}\n.a-virtual-table td.virtual-column__fixed-left,\n.a-virtual-table td.virtual-column__fixed-right {\n  background: #fff;\n}\n.a-virtual-table .ant-table-scroll-position-left .is-last-column:before {\n  box-shadow: none;\n}\n.a-virtual-table .ant-table-scroll-position-right .is-last-column,\n.a-virtual-table .ant-table-scroll-position-middle .is-last-column {\n  border-right: none;\n}\n.a-virtual-table .ant-table-scroll-position-right .is-first-column:before {\n  box-shadow: none;\n}\n.a-virtual-table .ant-table-scroll-position-left .is-first-column,\n.a-virtual-table .ant-table-scroll-position-middle .is-first-column {\n  border-left: none;\n}\n.a-virtual-table .is-last-column,\n.a-virtual-table .is-first-column {\n  overflow: visible !important;\n}\n.a-virtual-table .is-last-column:before,\n.a-virtual-table .is-first-column:before {\n  content: \"\";\n  position: absolute;\n  top: 0px;\n  width: 10px;\n  bottom: -1px;\n  overflow-x: hidden;\n  overflow-y: hidden;\n  touch-action: none;\n  pointer-events: none;\n  transition: box-shadow 0.3s ease;\n}\n.a-virtual-table .is-last-column:before {\n  right: -6px;\n  box-shadow: inset 6px 0 6px -4px rgba(0, 0, 0, 0.15);\n}\n.a-virtual-table .is-first-column:before {\n  left: -6px;\n  box-shadow: inset -6px 0 6px -4px rgba(0, 0, 0, 0.15);\n}\n",
+    inject("data-v-c10fc4d0_0", {
+      source: ".ant-table-row-loading-icon {\n  transition: none;\n  border: none;\n  background: transparent;\n}\n",
       map: {
         "version": 3,
-        "sources": ["a-virtual-table.vue"],
+        "sources": ["a-virtual-tree.vue"],
         "names": [],
-        "mappings": "AAAA;;EAEE,2BAA2B;EAC3B,qBAAqB;AACvB;AACA;;EAEE,gBAAgB;AAClB;AACA;EACE,gBAAgB;AAClB;AACA;;EAEE,kBAAkB;AACpB;AACA;EACE,gBAAgB;AAClB;AACA;;EAEE,iBAAiB;AACnB;AACA;;EAEE,4BAA4B;AAC9B;AACA;;EAEE,WAAW;EACX,kBAAkB;EAClB,QAAQ;EACR,WAAW;EACX,YAAY;EACZ,kBAAkB;EAClB,kBAAkB;EAClB,kBAAkB;EAClB,oBAAoB;EACpB,gCAAgC;AAClC;AACA;EACE,WAAW;EACX,oDAAoD;AACtD;AACA;EACE,UAAU;EACV,qDAAqD;AACvD",
-        "file": "a-virtual-table.vue",
-        "sourcesContent": [".a-virtual-table .virtual-column__fixed-left,\n.a-virtual-table .virtual-column__fixed-right {\n  position: sticky !important;\n  z-index: 2 !important;\n}\n.a-virtual-table td.virtual-column__fixed-left,\n.a-virtual-table td.virtual-column__fixed-right {\n  background: #fff;\n}\n.a-virtual-table .ant-table-scroll-position-left .is-last-column:before {\n  box-shadow: none;\n}\n.a-virtual-table .ant-table-scroll-position-right .is-last-column,\n.a-virtual-table .ant-table-scroll-position-middle .is-last-column {\n  border-right: none;\n}\n.a-virtual-table .ant-table-scroll-position-right .is-first-column:before {\n  box-shadow: none;\n}\n.a-virtual-table .ant-table-scroll-position-left .is-first-column,\n.a-virtual-table .ant-table-scroll-position-middle .is-first-column {\n  border-left: none;\n}\n.a-virtual-table .is-last-column,\n.a-virtual-table .is-first-column {\n  overflow: visible !important;\n}\n.a-virtual-table .is-last-column:before,\n.a-virtual-table .is-first-column:before {\n  content: \"\";\n  position: absolute;\n  top: 0px;\n  width: 10px;\n  bottom: -1px;\n  overflow-x: hidden;\n  overflow-y: hidden;\n  touch-action: none;\n  pointer-events: none;\n  transition: box-shadow 0.3s ease;\n}\n.a-virtual-table .is-last-column:before {\n  right: -6px;\n  box-shadow: inset 6px 0 6px -4px rgba(0, 0, 0, 0.15);\n}\n.a-virtual-table .is-first-column:before {\n  left: -6px;\n  box-shadow: inset -6px 0 6px -4px rgba(0, 0, 0, 0.15);\n}\n"]
+        "mappings": "AAAA;EACE,gBAAgB;EAChB,YAAY;EACZ,uBAAuB;AACzB",
+        "file": "a-virtual-tree.vue",
+        "sourcesContent": [".ant-table-row-loading-icon {\n  transition: none;\n  border: none;\n  background: transparent;\n}\n"]
       },
       media: undefined
     });
@@ -1612,6 +2209,9 @@
     staticRenderFns: __vue_staticRenderFns__
   }, __vue_inject_styles__, __vue_script__, __vue_scope_id__, __vue_is_functional_template__, __vue_module_identifier__, false, createInjector, undefined, undefined);
 
-  return __vue_component__;
+  exports.AVirtualTree = __vue_component__;
+  exports["default"] = __vue_component__$1;
+
+  Object.defineProperty(exports, '__esModule', { value: true });
 
 }));

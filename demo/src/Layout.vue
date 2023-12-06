@@ -128,6 +128,14 @@ export default {
           title: '索引',
           path: '/VIndex'
         },
+        {
+          title: '自定义树形结构1',
+          path: '/VTreeDemo'
+        },
+        {
+          title: '自定义树形结构2',
+          path: '/VTreeDemo2'
+        },
         '其他',
         {
           title: '搜索&筛选',

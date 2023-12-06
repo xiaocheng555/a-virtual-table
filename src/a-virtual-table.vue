@@ -148,6 +148,11 @@ export default {
       default: false
     }
   },
+  provide () {
+    return {
+      virtualTable: this
+    }
+  },
   data () {
     return {
       start: 0,
@@ -463,20 +468,20 @@ export default {
 
     // 【外部调用】滚动到第几行
     // （不太精确：滚动到第n行时，如果周围的表格行计算出真实高度后会更新高度，导致内容坍塌或撑起）
-    scrollTo (index, stop = false) {
+    scrollTo (index, offsetY = 0, stop = false) {
       const item = this.dataSource[index]
       if (item && this.scroller) {
         this.updateSizes()
         this.calcRenderData()
 
         this.$nextTick(() => {
-          const offsetTop = this.getItemOffsetTop(index)
+          const offsetTop = this.getItemOffsetTop(index) - offsetY
           scrollToY(this.scroller, offsetTop)
 
           // 调用两次scrollTo，第一次滚动时，如果表格行初次渲染高度发生变化时，会导致滚动位置有偏差，此时需要第二次执行滚动，确保滚动位置无误
           if (!stop) {
             setTimeout(() => {
-              this.scrollTo(index, true)
+              this.scrollTo(index, offsetY, true)
             }, 50)
           }
         })
@@ -606,6 +611,17 @@ export default {
         setScrollTop(this.tableBodyEl, top2)
         setScrollLeft(this.tableBodyEl, left2)
       }
+    },
+    // 【VirtualTree调用】更新数据
+    updateData (data = []) {
+      // 先存在list，通过$emit update更新data不是立即执行的（那么拿到的data就是最新），所以先存到list里，拿的就是最新数据
+      this.list = data
+      this.$emit('update:dataSource', this.list)
+    },
+
+    // 【VirtualTree调用】获取列表全部数据】
+    getData () {
+      return this.list || this.dataSource
     }
   },
   watch: {
