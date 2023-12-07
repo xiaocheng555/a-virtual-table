@@ -2149,7 +2149,9 @@
     var _vm = this;
     var _h = _vm.$createElement;
     var _c = _vm._self._c || _h;
-    return _c("span", [_c("span", {
+    return _c("span", {
+      staticClass: "a-virtual-tree"
+    }, [_c("span", {
       staticClass: "ant-table-row-indent",
       style: {
         paddingLeft: (_vm.row.$v_level - 1) * _vm.indentSize + "px"
@@ -2181,15 +2183,15 @@
   /* style */
   var __vue_inject_styles__ = function __vue_inject_styles__(inject) {
     if (!inject) return;
-    inject("data-v-c10fc4d0_0", {
-      source: ".ant-table-row-loading-icon {\n  transition: none;\n  border: none;\n  background: transparent;\n}\n",
+    inject("data-v-2593beb7_0", {
+      source: ".a-virtual-tree {\n  display: inline-block;\n}\n.ant-table-row-loading-icon {\n  transition: none;\n  border: none;\n  background: transparent;\n}\n",
       map: {
         "version": 3,
         "sources": ["a-virtual-tree.vue"],
         "names": [],
-        "mappings": "AAAA;EACE,gBAAgB;EAChB,YAAY;EACZ,uBAAuB;AACzB",
+        "mappings": "AAAA;EACE,qBAAqB;AACvB;AACA;EACE,gBAAgB;EAChB,YAAY;EACZ,uBAAuB;AACzB",
         "file": "a-virtual-tree.vue",
-        "sourcesContent": [".ant-table-row-loading-icon {\n  transition: none;\n  border: none;\n  background: transparent;\n}\n"]
+        "sourcesContent": [".a-virtual-tree {\n  display: inline-block;\n}\n.ant-table-row-loading-icon {\n  transition: none;\n  border: none;\n  background: transparent;\n}\n"]
       },
       media: undefined
     });

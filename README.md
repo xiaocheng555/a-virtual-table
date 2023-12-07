@@ -134,7 +134,7 @@ export default {
 | selection-change | 虚拟表格多选选项发生更改时触发事件 | selectedRows |
 
 
-## a-virtual-tree 组件
+## a-virtual-tree 组件 (>= 1.1.0)
 
 自定义树型结构，性能更好
 

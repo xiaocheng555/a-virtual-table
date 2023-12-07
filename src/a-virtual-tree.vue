@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span class="a-virtual-tree">
     <span class="ant-table-row-indent" :style="{ paddingLeft: `${(row.$v_level - 1) * indentSize}px` }"></span>
     <slot name="loading" v-if="row.$v_loading">
       <a-icon type="loading" class="ant-table-row-expand-icon ant-table-row-loading-icon" key="loading" />
@@ -212,6 +212,10 @@ export default {
 </script>
 
 <style lang='less'>
+.a-virtual-tree {
+  display: inline-block;
+}
+
 .ant-table-row-loading-icon {
   transition: none;
   border: none;
