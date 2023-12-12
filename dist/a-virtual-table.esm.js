@@ -1629,11 +1629,15 @@ var script$1 = {
     }
   },
   watch: {
-    dataSource: function dataSource() {
+    dataSource: function dataSource(data, oldData) {
       if (!this.virtualized) {
         this.renderAllData();
       } else {
         this.doUpdate();
+      }
+      // 设置list
+      if (this.list && data !== oldData) {
+        this.list = data;
       }
     },
     virtualized: {
@@ -2147,7 +2151,7 @@ var __vue_render__ = function __vue_render__() {
   }, [_c("span", {
     staticClass: "ant-table-row-indent",
     style: {
-      paddingLeft: (_vm.row.$v_level - 1) * _vm.indentSize + "px"
+      paddingLeft: _vm.row.$v_level ? (_vm.row.$v_level - 1) * _vm.indentSize + "px" : 0
     }
   }), _vm._v(" "), _vm.row.$v_loading ? _vm._t("loading", function () {
     return [_c("a-icon", {
@@ -2176,7 +2180,7 @@ __vue_render__._withStripped = true;
 /* style */
 var __vue_inject_styles__ = function __vue_inject_styles__(inject) {
   if (!inject) return;
-  inject("data-v-2593beb7_0", {
+  inject("data-v-7b97fa79_0", {
     source: ".a-virtual-tree {\n  display: inline-block;\n}\n.ant-table-row-loading-icon {\n  transition: none;\n  border: none;\n  background: transparent;\n}\n",
     map: {
       "version": 3,

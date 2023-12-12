@@ -16,6 +16,7 @@
         </a-virtual-tree>
       </template>
     </a-virtual-table>
+    <el-button type="primary" @click="refresh">refresh</el-button>
   </div>
 </template>
 
@@ -62,6 +63,7 @@ export default {
     AVirtualTree
   },
   data () {
+    flag = 0
     return {
       expandedRowKeys: [],
       columns: [
@@ -109,10 +111,14 @@ export default {
           ellipsis: true
         }
       ],
-      list: mockData(0, 500)
+      list: mockData(0, 2000)
     }
   },
   methods: {
+    refresh () {
+      flag = 0
+      this.list = mockData(0, 2000)
+    },
     onload (row, resolve) {
       resolve(row.children || [])
     },

@@ -232,5 +232,11 @@ import AVirtualTable, { AVirtualTree } from 'a-virtual-table'
 
 * 支持自定义树形结构
 
-* npm 1.1.0 版本发版
+* npm 1.1.1 版本发版
 
+
+2023-12-12
+
+* 修复自定义表格树刷新数据后，子节点无法展开
+
+* npm 1.1.2 版本发包

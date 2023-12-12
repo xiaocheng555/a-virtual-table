@@ -625,11 +625,15 @@ export default {
     }
   },
   watch: {
-    dataSource () {
+    dataSource (data, oldData) {
       if (!this.virtualized) {
         this.renderAllData()
       } else {
         this.doUpdate()
+      }
+      // 设置list
+      if (this.list && data !== oldData) {
+        this.list = data
       }
     },
     virtualized: {
