@@ -358,6 +358,15 @@
       }
     }, exports;
   }
+  function _typeof(obj) {
+    "@babel/helpers - typeof";
+
+    return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
+      return typeof obj;
+    } : function (obj) {
+      return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    }, _typeof(obj);
+  }
   function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
     try {
       var info = gen[key](arg);
@@ -1241,6 +1250,25 @@
       }
     },
     methods: {
+      getSlotValue: function getSlotValue(text, record, index) {
+        if (_typeof(text) === 'object' && text.selectedKeys) {
+          console.log('text', text);
+          return text;
+        }
+        for (var _len = arguments.length, rest = new Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
+          rest[_key - 3] = arguments[_key];
+        }
+        return typeof record === 'number' ? _objectSpread2({
+          record: text,
+          index: record,
+          $index: this.start + record
+        }, rest) : _objectSpread2({
+          text: text,
+          record: record,
+          index: index,
+          $index: this.start + index
+        }, rest);
+      },
       // 初始化数据
       initData: function initData() {
         var _this2 = this;
@@ -1778,17 +1806,8 @@
       scopedSlots: _vm._u([_vm._l(Object.keys(_vm.$scopedSlots), function (slot) {
         return {
           key: slot,
-          fn: function fn(text, record, index) {
-            return [_vm._t(slot, null, null, typeof record === "number" ? {
-              record: text,
-              index: record,
-              $index: _vm.start + record
-            } : {
-              text: text,
-              record: record,
-              index: index,
-              $index: _vm.start + index
-            })];
+          fn: function fn(text, record, index, column) {
+            return [_vm._t(slot, null, null, _vm.getSlotValue(text, record, index, column))];
           }
         };
       })], null, true)

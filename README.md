@@ -240,3 +240,11 @@ import AVirtualTable, { AVirtualTree } from 'a-virtual-table'
 * 修复自定义表格树刷新数据后，子节点无法展开
 
 * npm 1.1.2 版本发包
+
+
+
+2023-6-14
+
+* 修复 demo 的搜索筛选功能不可用
+
+* npm 1.1.3 版本发包

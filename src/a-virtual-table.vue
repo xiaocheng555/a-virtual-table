@@ -6,8 +6,11 @@
       :pagination="false"
       :columns="tableColumns"
       :data-source="renderData">
-      <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="text, record, index">
-        <slot :name="slot" v-bind="typeof record === 'number' ? { record: text, index: record, $index: start + record } : { text, record, index, $index: start + index }"></slot>
+      <template
+        v-for="slot in Object.keys($scopedSlots)"
+        :slot="slot"
+        slot-scope="text, record, index, column">
+        <slot :name="slot" v-bind="getSlotValue(text, record, index, column)"></slot>
       </template>
       <!-- 支持自定义头部 -->
       <template v-for="slot in Object.keys($slots)" :slot="slot">
@@ -222,6 +225,26 @@ export default {
     }
   },
   methods: {
+    getSlotValue (text, record, index, ...rest) {
+      if (typeof text === 'object' && text.selectedKeys) {
+        console.log('text', text)
+        return text
+      }
+      return typeof record === 'number'
+        ? {
+          record: text,
+          index: record,
+          $index: this.start + record,
+          ...rest
+        }
+        : {
+          text,
+          record,
+          index,
+          $index: this.start + index,
+          ...rest
+        }
+    },
     // 初始化数据
     initData () {
       // 是否是表格内部滚动
